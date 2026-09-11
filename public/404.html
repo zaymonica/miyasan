@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="error.page_not_found">Page Not Found - 404</title>
+  <style>
+    :root {
+      --primary: #00a149;
+      --primary-dark: #004724;
+      --secondary: #319131;
+    }
+    
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+    
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, sans-serif;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      padding: 20px;
+    }
+    
+    .container {
+      text-align: center;
+      background: white;
+      padding: 60px 40px;
+      border-radius: 20px;
+      box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
+      max-width: 500px;
+      width: 100%;
+    }
+    
+    .logo {
+      max-width: 150px;
+      max-height: 80px;
+      margin-bottom: 30px;
+      object-fit: contain;
+    }
+    
+    .logo-placeholder {
+      width: 80px;
+      height: 80px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      border-radius: 20px;
+      margin: 0 auto 30px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    
+    .logo-placeholder svg {
+      width: 40px;
+      height: 40px;
+      fill: white;
+    }
+    
+    .error-code {
+      font-size: 120px;
+      font-weight: 800;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      -webkit-background-clip: text;
+      -webkit-text-fill-color: transparent;
+      background-clip: text;
+      line-height: 1;
+      margin-bottom: 20px;
+    }
+    
+    .error-title {
+      font-size: 24px;
+      color: #1a1a2e;
+      margin-bottom: 15px;
+      font-weight: 600;
+    }
+    
+    .error-message {
+      color: #666;
+      font-size: 16px;
+      line-height: 1.6;
+      margin-bottom: 30px;
+    }
+    
+    .btn {
+      display: inline-block;
+      padding: 14px 32px;
+      background: linear-gradient(135deg, var(--primary) 0%, var(--secondary) 100%);
+      color: white;
+      text-decoration: none;
+      border-radius: 50px;
+      font-weight: 600;
+      font-size: 16px;
+      transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+    
+    .btn:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 20px rgba(0, 161, 73, 0.4);
+    }
+    
+    .links {
+      margin-top: 30px;
+      padding-top: 20px;
+      border-top: 1px solid #eee;
+    }
+    
+    .links a {
+      color: var(--primary);
+      text-decoration: none;
+      margin: 0 15px;
+      font-size: 14px;
+    }
+    
+    .links a:hover {
+      text-decoration: underline;
+    }
+    
+    @media (max-width: 480px) {
+      .container {
+        padding: 40px 25px;
+      }
+      
+      .error-code {
+        font-size: 80px;
+      }
+      
+      .error-title {
+        font-size: 20px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="logo-container">
+      <div class="logo-placeholder">
+        <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+          <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
+        </svg>
+      </div>
+    </div>
+    
+    <div class="error-code">404</div>
+    <h1 class="error-title" data-i18n="error.page_not_found">Page Not Found</h1>
+    <p class="error-message" data-i18n="error.page_not_found_message">
+      Sorry, the page you are looking for does not exist or has been moved.
+    </p>
+    
+    <a href="/" class="btn" data-i18n="error.back_to_home">Back to Home</a>
+    
+    <div class="links">
+      <a href="/login" data-i18n="auth.login">Login</a>
+      <a href="/" data-i18n="auth.register">Register</a>
+    </div>
+  </div>
+
+  <script>
+    // Simple i18n loader for 404 page
+    async function loadTranslations() {
+      try {
+        const savedLang = localStorage.getItem('language');
+        const browserLang = navigator.language.split('-')[0];
+        const lang = savedLang || browserLang || 'en';
+        
+        const response = await fetch(`/locales/${lang}.json`);
+        if (response.ok) {
+          const translations = await response.json();
+          applyTranslations(translations);
+        }
+      } catch (error) {
+        console.log('Could not load translations, using defaults');
+      }
+    }
+    
+    function applyTranslations(translations) {
+      document.querySelectorAll('[data-i18n]').forEach(el => {
+        const key = el.getAttribute('data-i18n');
+        const value = getNestedValue(translations, key);
+        if (value) {
+          if (el.tagName === 'TITLE') {
+            document.title = value;
+          } else {
+            el.textContent = value;
+          }
+        }
+      });
+    }
+    
+    function getNestedValue(obj, path) {
+      return path.split('.').reduce((current, key) => current && current[key], obj);
+    }
+    
+    // Load system branding
+    async function loadBranding() {
+      try {
+        const response = await fetch('/api/public/branding');
+        if (response.ok) {
+          const data = await response.json();
+          if (data.success && data.data) {
+            const { system_logo, system_name } = data.data;
+            
+            if (system_logo) {
+              const logoContainer = document.getElementById('logo-container');
+              logoContainer.innerHTML = `<img src="${system_logo}" alt="${system_name || 'Logo'}" class="logo">`;
+            }
+            
+            if (system_name) {
+              const titleEl = document.querySelector('title');
+              if (titleEl) {
+                const currentTitle = titleEl.textContent;
+                document.title = currentTitle.includes('-') 
+                  ? currentTitle.split('-')[0].trim() + ' - ' + system_name
+                  : currentTitle + ' - ' + system_name;
+              }
+            }
+          }
+        }
+      } catch (error) {
+        console.log('Could not load branding');
+      }
+    }
+    
+    loadTranslations();
+    loadBranding();
+  </script>
+</body>
+</html>

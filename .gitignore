@@ -1,0 +1,92 @@
+# Dependencies
+node_modules/
+yarn.lock
+
+# Environment variables
+.env
+.env.local
+.env.*.local
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+pino-*.log
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Coverage directory
+coverage/
+.nyc_output/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+*~
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Uploads (keep structure, ignore content)
+uploads/*
+!uploads/.gitkeep
+!uploads/tenant_*/
+
+# Sessions
+sessions/*
+!sessions/.gitkeep
+
+# Backups
+backups/*
+!backups/.gitkeep
+
+# WhatsApp auth
+auth_info_*
+*.session.json
+
+# PM2
+.pm2/
+
+# Build
+dist/
+build/
+
+# Temporary files
+tmp/
+temp/
+*.tmp
+
+# Test and debug files
+test-*.js
+check-*.js
+fix-*.js
+diagnose-*.js
+reset-*.js
+restore-*.js
+limpar-*.js
+clear-*.js
+clean-*.js
+associate-*.js
+force-*.js
+test-session/
+
+# Release archives
+*.zip
+*.tar.gz
+
+# Temporary documentation
+COMECE_AQUI.txt
+PASSO_A_PASSO_FINAL.txt
+WELCOME.txt
+CREATION_SUMMARY.txt
+HOSTING_COMPATIBILITY.txt
+README_ENVIO_MENSAGENS.txt

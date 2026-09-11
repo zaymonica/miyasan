@@ -1,0 +1,266 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Instructions - Misayan SaaS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/js/branding.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #00a149 0%, #319131 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+        }
+
+        .header {
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .header i {
+            font-size: 64px;
+            color: #28a745;
+            margin-bottom: 20px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            color: #666;
+            font-size: 16px;
+        }
+
+        .instructions {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin-bottom: 25px;
+            border-left: 4px solid #28a745;
+        }
+
+        .instructions h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .instructions p {
+            color: #666;
+            line-height: 1.6;
+            white-space: pre-wrap;
+        }
+
+        .contact-info {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .contact-info h4 {
+            color: #856404;
+            margin-bottom: 15px;
+            font-size: 16px;
+        }
+
+        .contact-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 10px;
+            color: #856404;
+        }
+
+        .contact-item i {
+            width: 20px;
+        }
+
+        .alert {
+            background: #d1ecf1;
+            border: 1px solid #bee5eb;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 25px;
+            color: #0c5460;
+        }
+
+        .alert i {
+            margin-right: 10px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 14px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00a149 0%, #319131 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 161, 73, 0.3);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #00a149;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="color: #666;">Loading payment instructions...</p>
+        </div>
+
+        <div id="content" style="display: none;">
+            <div class="header">
+                <i class="fas fa-money-bill-wave"></i>
+                <h1>Payment Instructions</h1>
+                <p>Complete your payment to activate your account</p>
+            </div>
+
+            <div class="alert">
+                <i class="fas fa-info-circle"></i>
+                Your account has been created and is pending payment confirmation.
+            </div>
+
+            <div class="instructions" id="instructions">
+                <!-- Instructions will be loaded here -->
+            </div>
+
+            <div class="contact-info" id="contactInfo" style="display: none;">
+                <h4><i class="fas fa-phone-alt"></i> Contact Information</h4>
+                <div id="contactDetails">
+                    <!-- Contact details will be loaded here -->
+                </div>
+            </div>
+
+            <a href="/login" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt"></i> Go to Login
+            </a>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const tenantId = urlParams.get('tenant');
+
+        async function loadInstructions() {
+            if (!tenantId) {
+                document.getElementById('loading').innerHTML = '<p style="color: #c33;">Invalid session</p>';
+                return;
+            }
+
+            try {
+                // Get the latest payment for this tenant
+                const response = await fetch(`/api/public/payment-instructions?tenant=${tenantId}`);
+                const data = await response.json();
+
+                if (data.success) {
+                    displayInstructions(data.data);
+                } else {
+                    document.getElementById('loading').innerHTML = '<p style="color: #c33;">Error loading instructions</p>';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                document.getElementById('loading').innerHTML = '<p style="color: #c33;">Error loading instructions</p>';
+            }
+        }
+
+        function displayInstructions(data) {
+            const instructionsEl = document.getElementById('instructions');
+            const contactInfoEl = document.getElementById('contactInfo');
+            const contactDetailsEl = document.getElementById('contactDetails');
+
+            instructionsEl.innerHTML = `
+                <h3>How to Complete Your Payment</h3>
+                <p>${data.instructions || 'Please contact us to complete your payment.'}</p>
+            `;
+
+            if (data.contact_email || data.contact_phone) {
+                let contactHTML = '';
+                
+                if (data.contact_email) {
+                    contactHTML += `
+                        <div class="contact-item">
+                            <i class="fas fa-envelope"></i>
+                            <span>${data.contact_email}</span>
+                        </div>
+                    `;
+                }
+                
+                if (data.contact_phone) {
+                    contactHTML += `
+                        <div class="contact-item">
+                            <i class="fas fa-phone"></i>
+                            <span>${data.contact_phone}</span>
+                        </div>
+                    `;
+                }
+
+                contactDetailsEl.innerHTML = contactHTML;
+                contactInfoEl.style.display = 'block';
+            }
+
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+        }
+
+        // Load instructions on page load
+        loadInstructions();
+    </script>
+</body>
+</html>

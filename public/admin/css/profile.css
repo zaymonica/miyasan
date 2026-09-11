@@ -1,0 +1,211 @@
+/**
+ * Profile Page Styles
+ * 
+ * Styles for the profile customization page including logo upload and color scheme.
+ */
+
+/* Color Grid */
+.color-grid {
+  display: grid;
+  gap: 25px;
+}
+
+.color-group {
+  background: #f8f9fa;
+  padding: 20px;
+  border-radius: 8px;
+}
+
+.color-group h5 {
+  margin: 0 0 15px 0;
+  font-size: 14px;
+  font-weight: 600;
+  color: #333;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+}
+
+.color-item {
+  margin-bottom: 15px;
+}
+
+.color-item:last-child {
+  margin-bottom: 0;
+}
+
+.color-item label {
+  display: block;
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 500;
+  color: #555;
+}
+
+.color-input-group {
+  display: flex;
+  gap: 10px;
+  align-items: center;
+}
+
+.color-input-group input[type="color"] {
+  width: 50px;
+  height: 40px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.color-input-group input[type="color"]:hover {
+  transform: scale(1.05);
+}
+
+.color-input-group input[type="text"] {
+  flex: 1;
+  padding: 8px 12px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  text-transform: uppercase;
+  transition: border-color 0.2s;
+}
+
+.color-input-group input[type="text"]:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 3px rgba(0, 123, 255, 0.1);
+}
+
+/* Logo Upload */
+.btn {
+  padding: 10px 20px;
+  border: none;
+  border-radius: 4px;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  transition: all 0.2s;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.btn-primary {
+  background: #007bff;
+  color: white;
+}
+
+.btn-primary:hover {
+  background: #0056b3;
+  transform: translateY(-1px);
+  box-shadow: 0 2px 8px rgba(0, 123, 255, 0.3);
+}
+
+.btn-secondary {
+  background: #6c757d;
+  color: white;
+}
+
+.btn-secondary:hover {
+  background: #5a6268;
+}
+
+.btn-danger {
+  background: #dc3545;
+  color: white;
+}
+
+.btn-danger:hover {
+  background: #c82333;
+}
+
+/* Preview Section */
+#colorPreview {
+  position: sticky;
+  top: 20px;
+}
+
+/* Card Styles */
+.card {
+  background: white;
+  border-radius: 8px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  overflow: hidden;
+}
+
+.card-header {
+  padding: 20px;
+  border-bottom: 1px solid #e0e0e0;
+  background: #f8f9fa;
+}
+
+.card-header h3 {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  color: #333;
+}
+
+.card-body {
+  padding: 25px;
+}
+
+/* Responsive */
+@media (max-width: 768px) {
+  .card-body > div[style*="grid-template-columns"] {
+    grid-template-columns: 1fr !important;
+  }
+
+  #colorPreview {
+    position: relative;
+    top: 0;
+  }
+}
+
+/* RTL Support */
+[dir="rtl"] .color-input-group {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .btn {
+  flex-direction: row-reverse;
+}
+
+[dir="rtl"] .color-item label {
+  text-align: right;
+}
+
+/* Animation */
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.color-group {
+  animation: fadeIn 0.3s ease-out;
+}
+
+.color-group:nth-child(1) { animation-delay: 0.05s; }
+.color-group:nth-child(2) { animation-delay: 0.1s; }
+.color-group:nth-child(3) { animation-delay: 0.15s; }
+
+/* Upload Progress */
+#uploadProgress {
+  animation: fadeIn 0.3s ease-out;
+}
+
+/* Logo Preview */
+#logoPreview {
+  transition: opacity 0.3s;
+}
+
+#logoPreview:hover {
+  opacity: 0.8;
+}

@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Checkout - Misayan SaaS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/js/branding.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #00a149 0%, #319131 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .checkout-container {
+            max-width: 1000px;
+            margin: 40px auto;
+            display: grid;
+            grid-template-columns: 1fr 400px;
+            gap: 30px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            padding: 40px;
+        }
+
+        .card-header {
+            margin-bottom: 30px;
+        }
+
+        .card-header h2 {
+            font-size: 24px;
+            color: #333;
+            margin-bottom: 10px;
+        }
+
+        .card-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .plan-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 20px;
+        }
+
+        .plan-summary h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .plan-summary .price {
+            font-size: 36px;
+            font-weight: bold;
+            color: #00a149;
+            margin-bottom: 20px;
+        }
+
+        .plan-summary .price span {
+            font-size: 16px;
+            color: #666;
+            font-weight: normal;
+        }
+
+        .plan-features {
+            list-style: none;
+            margin-bottom: 20px;
+        }
+
+        .plan-features li {
+            padding: 8px 0;
+            color: #666;
+            font-size: 14px;
+        }
+
+        .plan-features li i {
+            color: #25D366;
+            margin-right: 10px;
+        }
+
+        .payment-methods {
+            margin-top: 30px;
+        }
+
+        .payment-method {
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 15px;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .payment-method:hover {
+            border-color: #00a149;
+            background: #f8f9ff;
+        }
+
+        .payment-method.selected {
+            border-color: #00a149;
+            background: #f8f9ff;
+            box-shadow: 0 4px 12px rgba(0, 161, 73, 0.2);
+        }
+
+        .payment-method input[type="radio"] {
+            width: 20px;
+            height: 20px;
+            accent-color: #00a149;
+        }
+
+        .payment-method-icon {
+            font-size: 32px;
+            width: 50px;
+            text-align: center;
+        }
+
+        .payment-method-info {
+            flex: 1;
+        }
+
+        .payment-method-info h4 {
+            color: #333;
+            margin-bottom: 5px;
+        }
+
+        .payment-method-info p {
+            color: #666;
+            font-size: 13px;
+        }
+
+        .btn {
+            width: 100%;
+            padding: 16px;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            margin-top: 20px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00a149 0%, #319131 100%);
+            color: white;
+        }
+
+        .btn-primary:hover:not(:disabled) {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 161, 73, 0.3);
+        }
+
+        .btn-primary:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+        }
+
+        .alert {
+            padding: 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+        }
+
+        .alert-info {
+            background: #e3f2fd;
+            color: #1976d2;
+            border: 1px solid #bbdefb;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .loading {
+            display: none;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .loading.active {
+            display: block;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #00a149;
+            border-radius: 50%;
+            width: 40px;
+            height: 40px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .order-summary {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-top: 20px;
+        }
+
+        .order-line {
+            display: flex;
+            justify-content: space-between;
+            padding: 10px 0;
+            color: #666;
+        }
+
+        .order-line.total {
+            border-top: 2px solid #e0e0e0;
+            margin-top: 10px;
+            padding-top: 15px;
+            font-weight: bold;
+            color: #333;
+            font-size: 18px;
+        }
+
+        @media (max-width: 768px) {
+            .checkout-container {
+                grid-template-columns: 1fr;
+            }
+
+            .card {
+                padding: 30px 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="checkout-container">
+        <!-- Payment Methods -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-credit-card"></i> Payment Method</h2>
+                <p>Choose how you want to pay for your subscription</p>
+            </div>
+
+            <div id="alertContainer"></div>
+
+            <div class="payment-methods" id="paymentMethods">
+                <div class="loading active">
+                    <div class="spinner"></div>
+                    <p style="margin-top: 15px; color: #666;">Loading payment methods...</p>
+                </div>
+            </div>
+
+            <button class="btn btn-primary" id="proceedBtn" style="display: none;" disabled>
+                <i class="fas fa-lock"></i> Proceed to Payment
+            </button>
+        </div>
+
+        <!-- Order Summary -->
+        <div class="card">
+            <div class="card-header">
+                <h2><i class="fas fa-receipt"></i> Order Summary</h2>
+            </div>
+
+            <div class="plan-summary" id="planSummary">
+                <div class="loading active">
+                    <div class="spinner"></div>
+                </div>
+            </div>
+
+            <div class="order-summary">
+                <div class="order-line">
+                    <span>Subtotal</span>
+                    <span id="subtotal">-</span>
+                </div>
+                <div class="order-line total">
+                    <span>Total</span>
+                    <span id="total">-</span>
+                </div>
+            </div>
+
+            <div class="alert alert-info" style="margin-top: 20px;">
+                <i class="fas fa-info-circle"></i>
+                Your subscription will renew automatically every month. You can cancel anytime.
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const planId = urlParams.get('plan');
+        const tenantId = urlParams.get('tenant');
+
+        let selectedPlan = null;
+        let selectedGateway = null;
+
+        // Load plan and payment methods
+        async function init() {
+            if (!planId || !tenantId) {
+                showAlert('Invalid checkout session', 'error');
+                return;
+            }
+
+            await Promise.all([
+                loadPlan(),
+                loadPaymentMethods()
+            ]);
+        }
+
+        async function loadPlan() {
+            try {
+                const response = await fetch('/api/landing/settings');
+                const data = await response.json();
+
+                if (data.success) {
+                    selectedPlan = data.data.plans.find(p => p.id == planId);
+                    if (selectedPlan) {
+                        displayPlan(selectedPlan);
+                    } else {
+                        showAlert('Plan not found', 'error');
+                    }
+                }
+            } catch (error) {
+                console.error('Error loading plan:', error);
+                showAlert('Error loading plan details', 'error');
+            }
+        }
+
+        async function loadPaymentMethods() {
+            try {
+                const response = await fetch('/api/public/payment-gateways');
+                const data = await response.json();
+
+                if (data.success && data.data.length > 0) {
+                    displayPaymentMethods(data.data);
+                } else {
+                    showAlert('No payment methods available. Please contact support.', 'error');
+                }
+            } catch (error) {
+                console.error('Error loading payment methods:', error);
+                showAlert('Error loading payment methods', 'error');
+            }
+        }
+
+        function displayPlan(plan) {
+            const planSummary = document.getElementById('planSummary');
+            const features = plan.formatted_features || [];
+            
+            planSummary.innerHTML = `
+                <h3>${plan.name}</h3>
+                <div class="price">${plan.currency} ${parseFloat(plan.price).toFixed(2)} <span>/month</span></div>
+                <ul class="plan-features">
+                    ${features.map(f => `<li><i class="fas fa-check"></i> ${f.text}</li>`).join('')}
+                </ul>
+            `;
+
+            document.getElementById('subtotal').textContent = `${plan.currency} ${parseFloat(plan.price).toFixed(2)}`;
+            document.getElementById('total').textContent = `${plan.currency} ${parseFloat(plan.price).toFixed(2)}`;
+        }
+
+        function displayPaymentMethods(gateways) {
+            const container = document.getElementById('paymentMethods');
+            
+            const icons = {
+                stripe: '<i class="fab fa-stripe" style="color: #635bff;"></i>',
+                paypal: '<i class="fab fa-paypal" style="color: #0070ba;"></i>',
+                cash: '<i class="fas fa-money-bill-wave" style="color: #28a745;"></i>'
+            };
+
+            const descriptions = {
+                stripe: 'Pay securely with credit or debit card',
+                paypal: 'Pay with your PayPal account',
+                cash: 'Manual payment via bank transfer or cash'
+            };
+
+            container.innerHTML = gateways.map((gateway, index) => `
+                <div class="payment-method ${index === 0 ? 'selected' : ''}" onclick="selectPaymentMethod('${gateway.gateway_name}', this)">
+                    <input type="radio" name="payment_method" value="${gateway.gateway_name}" ${index === 0 ? 'checked' : ''}>
+                    <div class="payment-method-icon">
+                        ${icons[gateway.gateway_name] || '<i class="fas fa-credit-card"></i>'}
+                    </div>
+                    <div class="payment-method-info">
+                        <h4>${gateway.gateway_name.charAt(0).toUpperCase() + gateway.gateway_name.slice(1)}</h4>
+                        <p>${descriptions[gateway.gateway_name] || 'Payment method'}</p>
+                    </div>
+                </div>
+            `).join('');
+
+            // Select first method by default
+            if (gateways.length > 0) {
+                selectedGateway = gateways[0].gateway_name;
+                document.getElementById('proceedBtn').style.display = 'block';
+                document.getElementById('proceedBtn').disabled = false;
+            }
+        }
+
+        function selectPaymentMethod(gateway, element) {
+            // Remove selected class from all
+            document.querySelectorAll('.payment-method').forEach(el => {
+                el.classList.remove('selected');
+            });
+
+            // Add selected class to clicked
+            element.classList.add('selected');
+            element.querySelector('input[type="radio"]').checked = true;
+            
+            selectedGateway = gateway;
+        }
+
+        function showAlert(message, type = 'error') {
+            const alertContainer = document.getElementById('alertContainer');
+            alertContainer.innerHTML = `
+                <div class="alert alert-${type}">
+                    <i class="fas fa-${type === 'error' ? 'exclamation-circle' : 'info-circle'}"></i>
+                    ${message}
+                </div>
+            `;
+        }
+
+        document.getElementById('proceedBtn').addEventListener('click', async () => {
+            if (!selectedGateway || !selectedPlan) {
+                showAlert('Please select a payment method', 'error');
+                return;
+            }
+
+            const btn = document.getElementById('proceedBtn');
+            btn.disabled = true;
+            btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Processing...';
+
+            try {
+                // Create payment session
+                const response = await fetch('/api/public/create-payment-session', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        tenant_id: tenantId,
+                        plan_id: planId,
+                        gateway: selectedGateway
+                    })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    // Redirect based on gateway
+                    if (selectedGateway === 'stripe' && data.data.checkout_url) {
+                        window.location.href = data.data.checkout_url;
+                    } else if (selectedGateway === 'paypal' && data.data.approval_url) {
+                        window.location.href = data.data.approval_url;
+                    } else if (selectedGateway === 'cash') {
+                        window.location.href = `/payment-instructions?tenant=${tenantId}`;
+                    }
+                } else {
+                    showAlert(data.message || 'Error creating payment session', 'error');
+                    btn.disabled = false;
+                    btn.innerHTML = '<i class="fas fa-lock"></i> Proceed to Payment';
+                }
+            } catch (error) {
+                console.error('Error:', error);
+                showAlert('Error processing payment', 'error');
+                btn.disabled = false;
+                btn.innerHTML = '<i class="fas fa-lock"></i> Proceed to Payment';
+            }
+        });
+
+        // Initialize
+        init();
+    </script>
+</body>
+</html>

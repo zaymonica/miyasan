@@ -1,0 +1,708 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <meta name="apple-mobile-web-app-capable" content="yes">
+    <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+    <title data-i18n="conversations.title">Conversations - User Panel</title>
+    
+    <!-- CSS Files -->
+    <link rel="stylesheet" href="/admin/css/admin.css">
+    <link rel="stylesheet" href="/user/css/conversations-user.css">
+    <!-- Use local or allowed CDN for Font Awesome -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <!-- Manifest for PWA -->
+    <link rel="manifest" href="/manifest.json">
+    <meta name="theme-color" content="#00a149">
+    
+    <style>
+        /* CSS Variables */
+        :root {
+            --primary: #25d366;
+            --primary-dark: #1fa853;
+            --text: #1f2937;
+            --text-light: #6b7280;
+            --border: #e5e7eb;
+            --light: #f3f4f6;
+            --danger: #ef4444;
+            --warning: #f59e0b;
+            --success: #10b981;
+        }
+        
+        /* Override for user mode - full screen */
+        * {
+            box-sizing: border-box;
+        }
+        
+        body {
+            margin: 0;
+            padding: 0;
+            overflow: hidden;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+        }
+        
+        #user-conversations-page {
+            display: block !important;
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            width: 100vw;
+            height: 100vh;
+            padding: 0 !important;
+            margin: 0 !important;
+            background: #f8f9fa;
+            overflow: hidden;
+        }
+        
+        /* User Header Styles */
+        .user-header {
+            display: flex !important;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 20px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+            position: relative;
+            z-index: 1000;
+            width: 100%;
+        }
+        
+        .user-header-left h1 {
+            margin: 0;
+            font-size: 20px;
+            font-weight: 600;
+            color: #111827;
+        }
+        
+        .user-header-right {
+            display: flex;
+            align-items: center;
+        }
+        
+        .user-logout-btn {
+            display: flex !important;
+            align-items: center;
+            gap: 6px;
+            padding: 8px 12px;
+            background: #ef4444;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background-color 0.2s;
+        }
+        
+        .user-logout-btn:hover {
+            background: #dc2626;
+        }
+        
+        .user-logout-btn i {
+            font-size: 14px;
+        }
+        
+        /* Adjust main content to account for header */
+        .user-conversations-content {
+            height: calc(100vh - 60px);
+            overflow: auto;
+        }
+        
+        .sidebar {
+            display: none !important;
+        }
+        
+        .header {
+            display: none !important;
+        }
+        
+        .main-content {
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+
+        /* Fix for missing conversation interface styles */
+        .conversation-header {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 12px 16px;
+            background: white;
+            border-bottom: 1px solid #e5e7eb;
+        }
+
+        .conversation-header-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .conversation-back-btn {
+            background: none;
+            border: none;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .conversation-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: #e5e7eb;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 600;
+            color: #374151;
+        }
+
+        .conversation-avatar img {
+            width: 100%;
+            height: 100%;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .conversation-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .conversation-name {
+            font-weight: 600;
+            color: #111827;
+            font-size: 16px;
+        }
+
+        .conversation-phone {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .conversation-body {
+            display: flex;
+            height: calc(100vh - 60px);
+        }
+
+        .conversation-messages-area {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .conversation-messages {
+            flex: 1;
+            padding: 16px;
+            overflow-y: auto;
+            background: #f9fafb;
+        }
+
+        .conversation-input-area {
+            padding: 16px;
+            background: white;
+            border-top: 1px solid #e5e7eb;
+        }
+
+        .conversation-input-wrapper {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            background: #f3f4f6;
+            border-radius: 24px;
+            padding: 8px 16px;
+        }
+
+        .conversation-input-field {
+            flex: 1;
+            border: none;
+            background: none;
+            outline: none;
+            font-size: 14px;
+            padding: 8px 0;
+        }
+
+        .conversation-send-btn {
+            background: #25d366;
+            border: none;
+            border-radius: 50%;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            cursor: pointer;
+        }
+
+        .conversation-sidebar {
+            width: 300px;
+            background: white;
+            border-left: 1px solid #e5e7eb;
+            padding: 16px;
+            overflow-y: auto;
+        }
+
+        .conversation-sidebar-header {
+            margin-bottom: 16px;
+        }
+
+        .conversation-sidebar-title {
+            font-weight: 600;
+            font-size: 16px;
+            margin-bottom: 12px;
+        }
+
+        .conversation-sidebar-tabs {
+            display: flex;
+            gap: 8px;
+        }
+
+        .conversation-sidebar-tab {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .conversation-sidebar-tab.active {
+            background: #25d366;
+            color: white;
+            border-color: #25d366;
+        }
+
+        .contact-info-section {
+            margin-bottom: 16px;
+        }
+
+        .contact-info-label {
+            font-weight: 600;
+            font-size: 12px;
+            text-transform: uppercase;
+            color: #6b7280;
+            margin-bottom: 4px;
+        }
+
+        .contact-info-value {
+            color: #111827;
+            font-size: 14px;
+        }
+
+        .tags-section {
+            margin-bottom: 16px;
+        }
+
+        .tags-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 4px;
+            margin-bottom: 8px;
+        }
+
+        .tag-badge {
+            background: #e5e7eb;
+            color: #374151;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 12px;
+        }
+
+        .tag-empty {
+            color: #6b7280;
+            font-size: 14px;
+        }
+
+        .add-tag-input {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+        }
+
+        .conversation-transfer-types {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 12px;
+        }
+
+        .conversation-transfer-type {
+            padding: 8px 16px;
+            border: 1px solid #e5e7eb;
+            background: white;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+        }
+
+        .conversation-transfer-type.active {
+            background: #25d366;
+            color: white;
+            border-color: #25d366;
+        }
+
+        .conversation-transfer-select {
+            margin-bottom: 12px;
+        }
+
+        .conversation-transfer-select select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            background: white;
+        }
+
+        .conversation-transfer-select select option {
+            padding: 8px;
+        }
+
+        .conversation-transfer-confirm {
+            width: 100%;
+            padding: 10px;
+            background: #25d366;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-size: 14px;
+            font-weight: 600;
+        }
+
+        #conversationTransferReason {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #e5e7eb;
+            border-radius: 6px;
+            font-size: 14px;
+            margin-bottom: 12px;
+        }
+
+        /* Logout Modal Styles */
+        .logout-modal {
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            z-index: 10000;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .logout-modal-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(2px);
+        }
+
+        .logout-modal-content {
+            position: relative;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04);
+            min-width: 320px;
+            max-width: 400px;
+            margin: 20px;
+            animation: modalSlideIn 0.3s ease-out;
+        }
+
+        @keyframes modalSlideIn {
+            from {
+                opacity: 0;
+                transform: translateY(-20px) scale(0.95);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0) scale(1);
+            }
+        }
+
+        .logout-modal-header {
+            padding: 20px 20px 16px;
+            border-bottom: 1px solid #e5e7eb;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logout-modal-header h3 {
+            margin: 0;
+            font-size: 18px;
+            font-weight: 600;
+            color: #111827;
+        }
+
+        .logout-modal-close {
+            background: none;
+            border: none;
+            font-size: 24px;
+            color: #9ca3af;
+            cursor: pointer;
+            padding: 0;
+            width: 28px;
+            height: 28px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            border-radius: 4px;
+            transition: all 0.2s;
+        }
+
+        .logout-modal-close:hover {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .logout-modal-body {
+            padding: 24px 20px;
+            text-align: center;
+        }
+
+        .logout-modal-icon {
+            font-size: 48px;
+            color: #ef4444;
+            margin-bottom: 16px;
+        }
+
+        .logout-modal-body p {
+            margin: 0;
+            color: #6b7280;
+            font-size: 14px;
+            line-height: 1.6;
+        }
+
+        .logout-modal-footer {
+            padding: 16px 20px 20px;
+            display: flex;
+            gap: 12px;
+            justify-content: flex-end;
+        }
+
+        .logout-modal-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            font-size: 14px;
+            font-weight: 500;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .logout-modal-btn-cancel {
+            background: #f3f4f6;
+            color: #374151;
+        }
+
+        .logout-modal-btn-cancel:hover {
+            background: #e5e7eb;
+        }
+
+        .logout-modal-btn-confirm {
+            background: #ef4444;
+            color: white;
+        }
+
+        .logout-modal-btn-confirm:hover {
+            background: #dc2626;
+        }
+    </style>
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/branding.js"></script>
+</head>
+<body>
+    <!-- User Conversations Page -->
+    <div id="user-conversations-page" class="page active">
+        <!-- Header -->
+        <div class="user-header">
+            <div class="user-header-left">
+                <button class="uc-hamburger-btn" id="userMenuBtn" aria-label="Menu">
+                    <i class="fas fa-bars"></i>
+                </button>
+                <h1>Conversations</h1>
+            </div>
+            <div class="user-header-right">
+                <button class="user-logout-btn" id="userLogoutBtn" data-i18n="common.logout">
+                    Logout
+                </button>
+            </div>
+        </div>
+        
+        <!-- Main content area -->
+        <div class="user-conversations-content">
+            <!-- The content will be rendered by JavaScript -->
+        </div>
+    </div>
+
+    <!-- Conversation Modal/Drawer -->
+    <div id="conversation-modal" class="conversation-modal hidden">
+        <!-- The conversation view will be rendered here -->
+    </div>
+
+    <!-- Overlay for modal -->
+    <div id="conversation-overlay" class="conversation-overlay hidden"></div>
+
+    <div id="logoutModal" class="logout-modal" style="display: none;">
+        <div class="logout-modal-overlay"></div>
+        <div class="logout-modal-content">
+            <div class="logout-modal-header">
+                <h3 data-i18n="common.logout">Logout</h3>
+                <button class="logout-modal-close" onclick="closeLogoutModal()">&times;</button>
+            </div>
+            <div class="logout-modal-body">
+                <i class="fas fa-sign-out-alt logout-modal-icon"></i>
+                <p data-i18n="common.logout_confirm">Are you sure you want to logout?</p>
+            </div>
+            <div class="logout-modal-footer">
+                <button class="logout-modal-btn logout-modal-btn-cancel" onclick="closeLogoutModal()" data-i18n="common.cancel">Cancel</button>
+                <button class="logout-modal-btn logout-modal-btn-confirm" onclick="confirmLogout()" data-i18n="common.logout">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="/admin/js/i18n.js"></script>
+    <script>
+        window.UserConversationsConfig = { webSource: 'legacy' };
+    </script>
+    <script src="/user/js/conversations-user.js" onerror="console.error('❌ Failed to load conversations-user.js')"></script>
+    
+    <script>
+        // Check if script loaded successfully
+        setTimeout(function() {
+            console.log('📝 Script loaded check - UserConversations:', typeof window.UserConversations);
+        }, 500);
+    </script>
+    
+    <script>
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', async () => {
+            console.log('🚀 Initializing User Conversations Page...');
+            
+            // Check if UserConversations is available
+            if (typeof window.UserConversations === 'undefined') {
+                console.error('❌ UserConversations is not defined!');
+                return;
+            }
+            
+            // Initialize UserConversations first
+            window.UserConversations.init();
+            
+            // Load transfer options using the old system approach
+            await loadTransferOptionsDirectly();
+        });
+        
+        // Load transfer options directly like the old system
+        async function loadTransferOptionsDirectly() {
+            try {
+                console.log('� Loadring transfer options directly...');
+                const token = localStorage.getItem('token');
+                const headers = { 'Authorization': `Bearer ${token}` };
+                
+                // Load stores
+                const storesResponse = await fetch('/api/user/whatsapp-cloud/stores', { headers });
+                console.log('📡 Stores response:', storesResponse.status);
+                
+                if (storesResponse.ok) {
+                    const storesData = await storesResponse.json();
+                    console.log('📊 Stores data:', storesData);
+                    
+                    if (storesData.success && storesData.data) {
+                        UserConversations.state.transferOptions.stores = storesData.data;
+                        console.log('✅ Stores loaded:', storesData.data.length);
+                    }
+                }
+                
+                // Load departments
+                const deptsResponse = await fetch('/api/user/whatsapp-cloud/departments', { headers });
+                console.log('📡 Departments response:', deptsResponse.status);
+                
+                if (deptsResponse.ok) {
+                    const deptsData = await deptsResponse.json();
+                    console.log('📊 Departments data:', deptsData);
+                    
+                    if (deptsData.success && deptsData.data) {
+                        UserConversations.state.transferOptions.departments = deptsData.data;
+                        console.log('✅ Departments loaded:', deptsData.data.length);
+                    }
+                }
+                
+                console.log('✅ Final transfer options state:', UserConversations.state.transferOptions);
+                
+                // Don't call updateTransferOptions here since no conversation is open yet
+                // It will be called when a conversation is opened and the transfer panel is shown
+                
+            } catch (error) {
+                console.error('❌ Error loading transfer options:', error);
+            }
+        }
+        
+        // Add event listener for transfer type buttons
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('conversation-transfer-type')) {
+                const transferType = e.target.getAttribute('data-transfer-type');
+                if (transferType) {
+                    console.log('🔄 Transfer type changed to:', transferType);
+                    UserConversations.state.transferTargetType = transferType;
+                    
+                    // Update active state
+                    document.querySelectorAll('.conversation-transfer-type').forEach(btn => {
+                        btn.classList.remove('active');
+                    });
+                    e.target.classList.add('active');
+                    
+                    // Call the updateTransferOptions function from UserConversations
+                    if (UserConversations && UserConversations.updateTransferOptions) {
+                        UserConversations.updateTransferOptions();
+                    }
+                }
+            }
+        });
+        
+        // Logout modal functions
+        function openLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'flex';
+        }
+
+        function closeLogoutModal() {
+            document.getElementById('logoutModal').style.display = 'none';
+        }
+
+        function confirmLogout() {
+            localStorage.removeItem('token');
+            window.location.href = '/login';
+        }
+
+        // Close modal on overlay click
+        document.addEventListener('click', (e) => {
+            if (e.target.classList.contains('logout-modal-overlay')) {
+                closeLogoutModal();
+            }
+        });
+
+        // Close modal on ESC key
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'Escape' && document.getElementById('logoutModal').style.display === 'flex') {
+                closeLogoutModal();
+            }
+        });
+    </script>
+</body>
+</html>

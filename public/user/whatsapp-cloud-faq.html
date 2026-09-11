@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WhatsApp Cloud FAQ Management</title>
+  
+  <!-- Font Awesome -->
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  
+  <!-- Custom Styles -->
+  <link rel="stylesheet" href="/user/css/whatsapp-cloud-faq.css">
+  
+  <style>
+    * {
+      margin: 0;
+      padding: 0;
+      box-sizing: border-box;
+    }
+
+    body {
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, 'Helvetica Neue', Arial, sans-serif;
+      background: #f9fafb;
+      color: #111827;
+    }
+
+    .container {
+      min-height: 100vh;
+      padding: 20px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div id="faq-container"></div>
+    
+    <!-- Debug Panel -->
+    <div style="position: fixed; top: 10px; right: 10px; background: #fff; padding: 10px; border: 1px solid #ccc; border-radius: 5px; z-index: 9999;">
+      <h4>Debug Panel</h4>
+      <button onclick="testToken()" style="margin: 2px; padding: 5px;">Test Token</button>
+      <button onclick="testAPI()" style="margin: 2px; padding: 5px;">Test API</button>
+      <button onclick="testCreateFAQ()" style="margin: 2px; padding: 5px;">Test Create FAQ</button>
+    </div>
+  </div>
+
+  <script>
+    // Debug functions
+    function testToken() {
+      const token = localStorage.getItem('token');
+      console.log('🔑 Token test:');
+      console.log('  Exists:', !!token);
+      console.log('  Length:', token ? token.length : 0);
+      console.log('  Preview:', token ? token.substring(0, 50) + '...' : 'No token');
+      alert('Token: ' + (token ? 'EXISTS (' + token.length + ' chars)' : 'NOT FOUND'));
+    }
+    
+    async function testAPI() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('No token found!');
+        return;
+      }
+      
+      try {
+        const response = await fetch('/api/user/whatsapp-cloud/faqs', {
+          headers: { 'Authorization': `Bearer ${token}` }
+        });
+        console.log('🌐 API test response:', response.status, response.statusText);
+        const data = await response.json();
+        console.log('📄 API test data:', data);
+        alert('API Response: ' + response.status + ' - ' + JSON.stringify(data));
+      } catch (error) {
+        console.error('❌ API test error:', error);
+        alert('API Error: ' + error.message);
+      }
+    }
+    
+    async function testCreateFAQ() {
+      const token = localStorage.getItem('token');
+      if (!token) {
+        alert('No token found!');
+        return;
+      }
+      
+      const testData = {
+        question: 'Teste direto do frontend',
+        answer: 'Esta é uma resposta de teste direto do frontend',
+        category: 'test',
+        active: true
+      };
+      
+      try {
+        const response = await fetch('/api/user/whatsapp-cloud/faqs', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${token}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify(testData)
+        });
+        
+        console.log('🧪 Test create response:', response.status, response.statusText);
+        const data = await response.json();
+        console.log('📄 Test create data:', data);
+        alert('Create Test: ' + response.status + ' - ' + JSON.stringify(data));
+      } catch (error) {
+        console.error('❌ Test create error:', error);
+        alert('Create Error: ' + error.message);
+      }
+    }
+  </script>
+
+  <!-- i18n Library -->
+  <script src="/admin/js/i18n.js"></script>
+  
+  <!-- FAQ Module -->
+  <script src="/user/js/whatsapp-cloud-faq.js"></script>
+</body>
+</html>

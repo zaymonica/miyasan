@@ -1,0 +1,13 @@
+{
+  "slug": "example-addon",
+  "name": "Example Add-on",
+  "description": "This is an example add-on to demonstrate the structure",
+  "version": "1.0.0",
+  "author": "System",
+  "icon": "puzzle-piece",
+  "config": {
+    "settings": {
+      "enabled": true
+    }
+  }
+}

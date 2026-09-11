@@ -1,0 +1,919 @@
+<!DOCTYPE html>
+<html lang="en" dir="ltr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title data-i18n="invoice.page_title">Invoice</title>
+  <script src="/js/branding.js"></script>
+  <style>
+    :root {
+      --primary: #00a149;
+      --primary-dark: #008c3e;
+      --danger: #dc3545;
+      --danger-dark: #c82333;
+      --warning: #ffc107;
+      --success: #28a745;
+      --gray-100: #f8f9fa;
+      --gray-200: #e9ecef;
+      --gray-300: #dee2e6;
+      --gray-500: #6c757d;
+      --gray-700: #495057;
+      --gray-900: #212529;
+      --white: #ffffff;
+      --shadow: 0 2px 10px rgba(0,0,0,0.1);
+      --radius: 12px;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body { 
+      font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif; 
+      background: var(--gray-100); 
+      min-height: 100vh;
+      color: var(--gray-900);
+    }
+    [dir="rtl"] { direction: rtl; text-align: right; }
+    .container { max-width: 800px; margin: 0 auto; padding: 20px; }
+    .card { 
+      background: var(--white); 
+      border-radius: var(--radius); 
+      box-shadow: var(--shadow); 
+      overflow: hidden; 
+      margin-bottom: 20px; 
+    }
+    .card-header { 
+      background: var(--primary); 
+      color: var(--white); 
+      padding: 24px; 
+    }
+    .card-header h1 { font-size: 24px; margin-bottom: 8px; }
+    .card-header p { opacity: 0.9; }
+    .card-body { padding: 30px; }
+    
+    /* Status badges */
+    .status-badge { 
+      display: inline-block; 
+      padding: 6px 16px; 
+      border-radius: 20px; 
+      font-size: 13px; 
+      font-weight: 600; 
+      text-transform: uppercase; 
+    }
+    .status-draft { background: var(--gray-200); color: var(--gray-500); }
+    .status-sent { background: #fff3cd; color: #856404; }
+    .status-viewed { background: #d1ecf1; color: #0c5460; }
+    .status-accepted { background: #d4edda; color: #155724; }
+    .status-rejected { background: #f8d7da; color: #721c24; }
+    .status-paid { background: #d4edda; color: #155724; }
+    
+    /* Info grid */
+    .info-grid { 
+      display: grid; 
+      grid-template-columns: 1fr 1fr; 
+      gap: 30px; 
+      margin: 20px 0; 
+    }
+    [dir="rtl"] .info-grid { direction: rtl; }
+    .info-section h3 { 
+      color: var(--gray-500); 
+      font-size: 12px; 
+      text-transform: uppercase; 
+      margin-bottom: 10px; 
+      letter-spacing: 0.5px;
+    }
+    .info-section p { color: var(--gray-700); line-height: 1.6; }
+    
+    /* Table */
+    table { width: 100%; border-collapse: collapse; margin: 20px 0; }
+    th, td { padding: 12px; text-align: left; border-bottom: 1px solid var(--gray-200); }
+    [dir="rtl"] th, [dir="rtl"] td { text-align: right; }
+    th { background: var(--gray-100); font-weight: 600; color: var(--gray-500); font-size: 13px; }
+    
+    /* Totals */
+    .totals { text-align: right; margin-top: 20px; }
+    [dir="rtl"] .totals { text-align: left; }
+    .totals p { margin: 8px 0; color: var(--gray-500); }
+    .totals .total { font-size: 24px; color: var(--primary); font-weight: 700; }
+    
+    /* Buttons */
+    .actions { display: flex; gap: 15px; margin-top: 30px; flex-wrap: wrap; }
+    .btn { 
+      padding: 14px 28px; 
+      border: none; 
+      border-radius: 8px; 
+      font-size: 15px; 
+      font-weight: 600; 
+      cursor: pointer; 
+      transition: all 0.2s;
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+    }
+    .btn:disabled { opacity: 0.6; cursor: not-allowed; }
+    .btn-primary { background: var(--primary); color: var(--white); }
+    .btn-primary:hover:not(:disabled) { background: var(--primary-dark); }
+    .btn-danger { background: var(--danger); color: var(--white); }
+    .btn-danger:hover:not(:disabled) { background: var(--danger-dark); }
+    .btn-secondary { background: var(--gray-500); color: var(--white); }
+    .btn-secondary:hover:not(:disabled) { background: var(--gray-700); }
+    .btn-success { background: var(--success); color: var(--white); }
+    .btn-success:hover:not(:disabled) { background: #218838; }
+    
+    /* Login form */
+    .login-form { max-width: 420px; margin: 80px auto; }
+    .login-form input { 
+      width: 100%; 
+      padding: 14px 16px; 
+      border: 2px solid var(--gray-300); 
+      border-radius: 8px; 
+      font-size: 15px; 
+      margin-bottom: 15px;
+      transition: border-color 0.2s;
+    }
+    .login-form input:focus { outline: none; border-color: var(--primary); }
+    .error-msg { 
+      color: var(--danger); 
+      margin-bottom: 15px; 
+      padding: 12px;
+      background: #f8d7da;
+      border-radius: 8px;
+      font-size: 14px;
+    }
+    .loading { text-align: center; padding: 60px; color: var(--gray-500); }
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 3px solid var(--gray-200);
+      border-top-color: var(--primary);
+      border-radius: 50%;
+      animation: spin 1s linear infinite;
+      margin: 0 auto 15px;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    
+    /* Modal */
+    .modal { 
+      display: none; 
+      position: fixed; 
+      top: 0; 
+      left: 0; 
+      width: 100%; 
+      height: 100%; 
+      background: rgba(0,0,0,0.5); 
+      z-index: 1000; 
+      justify-content: center; 
+      align-items: center;
+      padding: 20px;
+    }
+    .modal.active { display: flex; }
+    .modal-content { 
+      background: var(--white); 
+      border-radius: var(--radius); 
+      max-width: 500px; 
+      width: 100%;
+      max-height: 90vh;
+      overflow-y: auto;
+    }
+    .modal-header { 
+      padding: 20px; 
+      background: var(--primary); 
+      color: var(--white); 
+      border-radius: var(--radius) var(--radius) 0 0;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .modal-header h3 { margin: 0; }
+    .modal-close {
+      background: none;
+      border: none;
+      color: var(--white);
+      font-size: 24px;
+      cursor: pointer;
+      padding: 0;
+      line-height: 1;
+    }
+    .modal-body { padding: 24px; }
+    .modal-body textarea { 
+      width: 100%; 
+      padding: 14px; 
+      border: 2px solid var(--gray-300); 
+      border-radius: 8px; 
+      min-height: 120px; 
+      margin-top: 12px;
+      font-family: inherit;
+      font-size: 14px;
+      resize: vertical;
+    }
+    .modal-body textarea:focus { outline: none; border-color: var(--primary); }
+    .modal-footer {
+      padding: 16px 24px;
+      border-top: 1px solid var(--gray-200);
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+    }
+    .char-count {
+      font-size: 12px;
+      color: var(--gray-500);
+      margin-top: 8px;
+    }
+    .char-count.error { color: var(--danger); }
+    
+    /* Admin response box */
+    .admin-response {
+      background: #e3f2fd;
+      border-left: 4px solid #2196f3;
+      padding: 16px;
+      margin: 20px 0;
+      border-radius: 0 8px 8px 0;
+    }
+    [dir="rtl"] .admin-response {
+      border-left: none;
+      border-right: 4px solid #2196f3;
+      border-radius: 8px 0 0 8px;
+    }
+    .admin-response h4 {
+      color: #1565c0;
+      margin-bottom: 8px;
+      font-size: 14px;
+    }
+    .admin-response p {
+      color: var(--gray-700);
+      line-height: 1.5;
+    }
+    
+    /* Receipt style items */
+    .receipt-items {
+      background: var(--gray-100);
+      border-radius: 8px;
+      padding: 20px;
+      margin: 20px 0;
+    }
+    .receipt-item {
+      display: flex;
+      justify-content: space-between;
+      padding: 8px 0;
+      border-bottom: 1px dashed var(--gray-300);
+    }
+    .receipt-item:last-child { border-bottom: none; }
+    
+    @media (max-width: 600px) { 
+      .info-grid { grid-template-columns: 1fr; } 
+      .actions { flex-direction: column; }
+      .btn { width: 100%; justify-content: center; }
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <!-- Login Section -->
+    <div id="loginSection" class="login-form card" style="display: none;">
+      <div class="card-header">
+        <h1>🔐 <span data-i18n="invoice.access_title">Access Invoice</span></h1>
+      </div>
+      <div class="card-body">
+        <p style="margin-bottom: 20px; color: var(--gray-500);" data-i18n="invoice.enter_email">
+          Enter your email to view this invoice.
+        </p>
+        <div id="loginError" class="error-msg" style="display: none;"></div>
+        <input type="email" id="emailInput" data-i18n-placeholder="invoice.email_placeholder" placeholder="Your email address" required>
+        <button class="btn btn-primary" style="width: 100%;" onclick="verifyEmail()">
+          <span data-i18n="invoice.view_invoice">View Invoice</span>
+        </button>
+      </div>
+    </div>
+    
+    <!-- Loading Section -->
+    <div id="loadingSection" class="loading">
+      <div class="loading-spinner"></div>
+      <p data-i18n="invoice.loading">Loading invoice...</p>
+    </div>
+    
+    <!-- Invoice Section -->
+    <div id="invoiceSection" style="display: none;"></div>
+  </div>
+
+  <!-- Reject Modal -->
+  <div id="rejectModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h3 data-i18n="invoice.reject_title">Reject Invoice</h3>
+        <button class="modal-close" onclick="closeModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p data-i18n="invoice.reject_reason_prompt">Please provide a reason for rejection:</p>
+        <textarea id="rejectReason" data-i18n-placeholder="invoice.reject_placeholder" placeholder="Reason for rejection..." oninput="updateCharCount()"></textarea>
+        <div id="charCount" class="char-count">0/7 <span data-i18n="invoice.min_chars">minimum characters</span></div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeModal()" data-i18n="common.cancel">Cancel</button>
+        <button class="btn btn-danger" id="submitRejectBtn" onclick="submitRejection()" disabled data-i18n="invoice.submit_rejection">Submit</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Success Modal -->
+  <div id="successModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header" style="background: var(--success);">
+        <h3 id="successTitle">Success</h3>
+        <button class="modal-close" onclick="closeSuccessModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="successMessage" style="text-align: center; font-size: 16px;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-primary" onclick="closeSuccessModal()" data-i18n="common.ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Error Modal -->
+  <div id="errorModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header" style="background: var(--danger);">
+        <h3 id="errorTitle" data-i18n="common.error">Error</h3>
+        <button class="modal-close" onclick="closeErrorModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p id="errorMessage" style="text-align: center; font-size: 16px;"></p>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closeErrorModal()" data-i18n="common.ok">OK</button>
+      </div>
+    </div>
+  </div>
+
+  <!-- Payment Method Selection Modal -->
+  <div id="paymentMethodModal" class="modal">
+    <div class="modal-content">
+      <div class="modal-header" style="background: var(--primary);">
+        <h3 data-i18n="invoice.select_payment_method">Select Payment Method</h3>
+        <button class="modal-close" onclick="closePaymentMethodModal()">&times;</button>
+      </div>
+      <div class="modal-body">
+        <p style="margin-bottom: 20px; color: var(--gray-500);" data-i18n="invoice.choose_payment_method">
+          Choose how you would like to pay:
+        </p>
+        <div id="paymentMethodsList" style="display: flex; flex-direction: column; gap: 12px;">
+          <!-- Payment methods will be loaded here -->
+          <div class="loading" style="padding: 20px;">
+            <div class="loading-spinner"></div>
+            <p data-i18n="invoice.loading_methods">Loading payment methods...</p>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-secondary" onclick="closePaymentMethodModal()" data-i18n="common.cancel">Cancel</button>
+      </div>
+    </div>
+  </div>
+
+  <style>
+    .payment-method-option {
+      display: flex;
+      align-items: center;
+      padding: 16px;
+      border: 2px solid var(--gray-300);
+      border-radius: 8px;
+      cursor: pointer;
+      transition: all 0.2s;
+      background: var(--white);
+    }
+    .payment-method-option:hover {
+      border-color: var(--primary);
+      background: var(--gray-100);
+    }
+    .payment-method-option .icon {
+      font-size: 32px;
+      margin-right: 16px;
+      width: 50px;
+      text-align: center;
+    }
+    [dir="rtl"] .payment-method-option .icon {
+      margin-right: 0;
+      margin-left: 16px;
+    }
+    .payment-method-option .info {
+      flex: 1;
+    }
+    .payment-method-option .info h4 {
+      margin: 0 0 4px 0;
+      color: var(--gray-900);
+    }
+    .payment-method-option .info p {
+      margin: 0;
+      font-size: 13px;
+      color: var(--gray-500);
+    }
+    .payment-method-option .arrow {
+      color: var(--gray-500);
+      font-size: 20px;
+    }
+    .no-payment-methods {
+      text-align: center;
+      padding: 30px;
+      color: var(--gray-500);
+    }
+    .no-payment-methods .icon {
+      font-size: 48px;
+      margin-bottom: 15px;
+    }
+  </style>
+
+  <script>
+    let currentInvoice = null;
+    let invoiceNumber = '';
+    let clientEmail = '';
+
+    // Get invoice number from URL path
+    function getInvoiceNumber() {
+      const path = window.location.pathname;
+      const match = path.match(/\/invoice\/([^\/]+)/);
+      return match ? match[1] : null;
+    }
+
+    // Initialize
+    async function init() {
+      invoiceNumber = getInvoiceNumber();
+      if (!invoiceNumber) {
+        showError('Invalid invoice link');
+        return;
+      }
+      
+      // Check URL params for payment status
+      const urlParams = new URLSearchParams(window.location.search);
+      const paymentStatus = urlParams.get('payment');
+      if (paymentStatus === 'success') {
+        showSuccessModal('Payment Successful', 'Your payment has been processed successfully. Thank you!');
+      } else if (paymentStatus === 'cancelled') {
+        showErrorModal('Payment Cancelled', 'Your payment was cancelled. You can try again when ready.');
+      }
+      
+      // Show login form
+      showLoginForm();
+    }
+
+    // Show login form
+    function showLoginForm() {
+      document.getElementById('loadingSection').style.display = 'none';
+      document.getElementById('loginSection').style.display = 'block';
+    }
+
+    // Verify email and load invoice
+    async function verifyEmail() {
+      const email = document.getElementById('emailInput').value.trim();
+      if (!email) {
+        document.getElementById('loginError').textContent = getTranslation('invoice.email_required', 'Please enter your email');
+        document.getElementById('loginError').style.display = 'block';
+        return;
+      }
+      
+      clientEmail = email;
+      document.getElementById('loginError').style.display = 'none';
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('loadingSection').style.display = 'block';
+      
+      await loadInvoice(email);
+    }
+
+    // Load invoice
+    async function loadInvoice(email) {
+      try {
+        const response = await fetch(`/api/invoices/public/${invoiceNumber}?email=${encodeURIComponent(email)}`);
+        const data = await response.json();
+        
+        if (data.success) {
+          currentInvoice = data.invoice;
+          renderInvoice(data.invoice);
+        } else {
+          showLoginForm();
+          document.getElementById('loginError').textContent = data.error || getTranslation('invoice.invalid_email', 'Invalid email');
+          document.getElementById('loginError').style.display = 'block';
+        }
+      } catch (error) {
+        showLoginForm();
+        document.getElementById('loginError').textContent = getTranslation('invoice.load_error', 'Failed to load invoice');
+        document.getElementById('loginError').style.display = 'block';
+      }
+    }
+
+    // Show error
+    function showError(message) {
+      document.getElementById('loadingSection').innerHTML = `<p style="color: var(--danger);">${message}</p>`;
+    }
+
+
+    // Render invoice
+    function renderInvoice(inv) {
+      document.getElementById('loadingSection').style.display = 'none';
+      document.getElementById('loginSection').style.display = 'none';
+      document.getElementById('invoiceSection').style.display = 'block';
+      
+      const canAccept = ['sent', 'viewed'].includes(inv.status);
+      const isAccepted = inv.status === 'accepted';
+      const isPaid = inv.status === 'paid';
+      const isRejected = inv.status === 'rejected';
+      const hasAdminResponse = inv.admin_response && inv.admin_response.trim();
+      
+      // Build items receipt
+      const itemsHtml = inv.items.map(item => `
+        <div class="receipt-item">
+          <span>${escapeHtml(item.description)} × ${item.quantity}</span>
+          <span>${formatCurrency(item.total_price, inv.currency)}</span>
+        </div>
+      `).join('');
+      
+      document.getElementById('invoiceSection').innerHTML = `
+        <div class="card">
+          <div class="card-header">
+            <h1>${inv.type === 'quote' ? '📋' : '📄'} ${inv.type === 'quote' ? getTranslation('invoice.quote', 'Quote') : getTranslation('invoice.invoice', 'Invoice')} ${escapeHtml(inv.invoice_number)}</h1>
+            <p>${escapeHtml(inv.title)}</p>
+          </div>
+          <div class="card-body">
+            <span class="status-badge status-${inv.status}">${getStatusText(inv.status)}</span>
+            
+            <div class="info-grid">
+              <div class="info-section">
+                <h3 data-i18n="invoice.from">From</h3>
+                <p><strong>${escapeHtml(inv.tenant_name || 'Company')}</strong></p>
+              </div>
+              <div class="info-section">
+                <h3 data-i18n="invoice.to">To</h3>
+                <p>
+                  <strong>${escapeHtml(inv.client_name)}</strong><br>
+                  ${escapeHtml(inv.client_email)}<br>
+                  ${escapeHtml(inv.client_phone || '')}
+                </p>
+              </div>
+            </div>
+            
+            ${inv.description ? `<p style="margin: 20px 0; color: var(--gray-500);">${escapeHtml(inv.description)}</p>` : ''}
+            
+            ${hasAdminResponse ? `
+              <div class="admin-response">
+                <h4>💬 ${getTranslation('invoice.admin_response', 'Response from seller')}:</h4>
+                <p>${escapeHtml(inv.admin_response)}</p>
+              </div>
+            ` : ''}
+            
+            <div class="receipt-items">
+              <h4 style="margin-bottom: 15px; color: var(--gray-700);" data-i18n="invoice.items">Items</h4>
+              ${itemsHtml}
+            </div>
+            
+            <div class="totals">
+              <p>${getTranslation('invoice.subtotal', 'Subtotal')}: ${formatCurrency(inv.subtotal, inv.currency)}</p>
+              ${parseFloat(inv.tax_amount) > 0 ? `<p>${getTranslation('invoice.tax', 'Tax')}: ${formatCurrency(inv.tax_amount, inv.currency)}</p>` : ''}
+              ${parseFloat(inv.discount_amount) > 0 ? `<p>${getTranslation('invoice.discount', 'Discount')}: -${formatCurrency(inv.discount_amount, inv.currency)}</p>` : ''}
+              <p class="total">${getTranslation('invoice.total', 'Total')}: ${formatCurrency(inv.total_amount, inv.currency)}</p>
+            </div>
+            
+            <div class="actions">
+              ${canAccept ? `
+                <button class="btn btn-primary" onclick="acceptInvoice()">
+                  ✅ ${getTranslation('invoice.accept', 'Accept')}
+                </button>
+                <button class="btn btn-danger" onclick="showRejectModal()">
+                  ❌ ${getTranslation('invoice.reject', 'Reject')}
+                </button>
+              ` : ''}
+              
+              ${isAccepted && inv.type === 'invoice' ? `
+                <button class="btn btn-success" onclick="openPayment()">
+                  💳 ${getTranslation('invoice.pay_now', 'Pay Now')}
+                </button>
+              ` : ''}
+              
+              ${isPaid ? `
+                <div style="padding: 20px; background: #d4edda; border-radius: 8px; text-align: center; width: 100%;">
+                  <span style="font-size: 24px;">✅</span>
+                  <p style="color: #155724; font-weight: 600; margin-top: 10px;" data-i18n="invoice.paid_message">
+                    This invoice has been paid. Thank you!
+                  </p>
+                </div>
+              ` : ''}
+              
+              ${isRejected && !hasAdminResponse ? `
+                <div style="padding: 20px; background: #f8d7da; border-radius: 8px; text-align: center; width: 100%;">
+                  <span style="font-size: 24px;">⏳</span>
+                  <p style="color: #721c24; font-weight: 600; margin-top: 10px;" data-i18n="invoice.rejection_pending">
+                    Your rejection has been submitted. Waiting for seller response.
+                  </p>
+                  ${inv.rejection_reason ? `<p style="color: #721c24; margin-top: 10px;"><em>"${escapeHtml(inv.rejection_reason)}"</em></p>` : ''}
+                </div>
+              ` : ''}
+            </div>
+          </div>
+        </div>
+      `;
+    }
+
+    // Format currency
+    function formatCurrency(amount, currency) {
+      const symbols = { USD: '$', BRL: 'R$', EUR: '€', GBP: '£' };
+      return `${symbols[currency] || currency} ${parseFloat(amount).toFixed(2)}`;
+    }
+
+    // Get status text
+    function getStatusText(status) {
+      const statusMap = {
+        draft: getTranslation('status.draft', 'Draft'),
+        sent: getTranslation('status.sent', 'Sent'),
+        viewed: getTranslation('status.viewed', 'Viewed'),
+        accepted: getTranslation('status.accepted', 'Accepted'),
+        rejected: getTranslation('status.rejected', 'Rejected'),
+        paid: getTranslation('status.paid', 'Paid'),
+        cancelled: getTranslation('status.cancelled', 'Cancelled'),
+        archived: getTranslation('status.archived', 'Archived')
+      };
+      return statusMap[status] || status;
+    }
+
+    // Escape HTML
+    function escapeHtml(text) {
+      if (!text) return '';
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    }
+
+    // Available payment methods cache
+    let availablePaymentMethods = [];
+
+    // Load available payment methods
+    async function loadPaymentMethods() {
+      try {
+        const response = await fetch(`/api/invoices/public/${invoiceNumber}/payment-methods?email=${encodeURIComponent(clientEmail)}`);
+        const data = await response.json();
+        
+        if (data.success && data.payment_methods) {
+          availablePaymentMethods = data.payment_methods;
+          return data.payment_methods;
+        }
+        return [];
+      } catch (e) {
+        console.error('Error loading payment methods:', e);
+        return [];
+      }
+    }
+
+    // Show payment method selection modal
+    async function showPaymentMethodModal(action = 'accept') {
+      const modal = document.getElementById('paymentMethodModal');
+      const listContainer = document.getElementById('paymentMethodsList');
+      
+      // Show loading
+      listContainer.innerHTML = `
+        <div class="loading" style="padding: 20px;">
+          <div class="loading-spinner"></div>
+          <p data-i18n="invoice.loading_methods">Loading payment methods...</p>
+        </div>
+      `;
+      modal.classList.add('active');
+      
+      // Load payment methods
+      const methods = await loadPaymentMethods();
+      
+      if (methods.length === 0) {
+        listContainer.innerHTML = `
+          <div class="no-payment-methods">
+            <div class="icon">💳</div>
+            <p data-i18n="invoice.no_payment_methods">No payment methods available. Please contact the seller.</p>
+          </div>
+        `;
+        return;
+      }
+      
+      // Render payment method options
+      const icons = {
+        paypal: '🅿️',
+        stripe: '💳',
+        bank_transfer: '🏦',
+        cash: '💵',
+        pix: '📱'
+      };
+      
+      const descriptions = {
+        paypal: getTranslation('invoice.paypal_desc', 'Pay with your PayPal account or credit card'),
+        stripe: getTranslation('invoice.stripe_desc', 'Pay securely with credit or debit card'),
+        bank_transfer: getTranslation('invoice.bank_transfer_desc', 'Pay via bank transfer'),
+        cash: getTranslation('invoice.cash_desc', 'Pay with cash'),
+        pix: getTranslation('invoice.pix_desc', 'Pay with PIX (Brazil)')
+      };
+      
+      const displayNames = {
+        paypal: 'PayPal',
+        stripe: 'Stripe (Card)',
+        bank_transfer: getTranslation('invoices.bank_transfer', 'Bank Transfer'),
+        cash: getTranslation('invoices.cash', 'Cash'),
+        pix: 'PIX'
+      };
+      
+      listContainer.innerHTML = methods.map(method => `
+        <div class="payment-method-option" onclick="selectPaymentMethod('${method.name}', '${action}')">
+          <div class="icon">${icons[method.name] || method.icon || '💳'}</div>
+          <div class="info">
+            <h4>${method.display_name || displayNames[method.name] || method.name}</h4>
+            <p>${descriptions[method.name] || ''}</p>
+          </div>
+          <div class="arrow">→</div>
+        </div>
+      `).join('');
+    }
+
+    // Close payment method modal
+    function closePaymentMethodModal() {
+      document.getElementById('paymentMethodModal').classList.remove('active');
+    }
+
+    // Select payment method and proceed
+    async function selectPaymentMethod(methodName, action) {
+      closePaymentMethodModal();
+      
+      if (action === 'accept') {
+        await doAcceptInvoice(methodName);
+      } else if (action === 'pay') {
+        await doOpenPayment(methodName);
+      }
+    }
+
+    // Accept invoice - just accept without payment method selection
+    async function acceptInvoice() {
+      // Just accept the invoice without selecting payment method
+      await doAcceptInvoice(null);
+    }
+
+    // Actually accept the invoice
+    async function doAcceptInvoice(paymentMethod) {
+      try {
+        const body = { email: clientEmail };
+        
+        const response = await fetch(`/api/invoices/public/${invoiceNumber}/accept`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify(body)
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          // Update invoice status locally without reload
+          currentInvoice.status = 'accepted';
+          
+          // Re-render the invoice with updated status (shows Pay button, hides Accept/Reject)
+          renderInvoice(currentInvoice);
+          
+          showSuccessModal(
+            getTranslation('invoice.accepted_title', 'Invoice Accepted'),
+            getTranslation('invoice.accepted_message', 'Invoice accepted successfully! You can now proceed to payment.')
+          );
+        } else {
+          showErrorModal(getTranslation('common.error', 'Error'), data.error || getTranslation('invoice.accept_error', 'Failed to accept'));
+        }
+      } catch (e) {
+        showErrorModal(getTranslation('common.error', 'Error'), getTranslation('invoice.accept_error', 'Error accepting invoice'));
+      }
+    }
+
+    // Show reject modal
+    function showRejectModal() {
+      document.getElementById('rejectReason').value = '';
+      updateCharCount();
+      document.getElementById('rejectModal').classList.add('active');
+    }
+
+    // Close modal
+    function closeModal() {
+      document.getElementById('rejectModal').classList.remove('active');
+    }
+
+    // Update character count
+    function updateCharCount() {
+      const reason = document.getElementById('rejectReason').value;
+      const count = reason.trim().length;
+      const charCountEl = document.getElementById('charCount');
+      const submitBtn = document.getElementById('submitRejectBtn');
+      
+      charCountEl.textContent = `${count}/7 ${getTranslation('invoice.min_chars', 'minimum characters')}`;
+      
+      if (count >= 7) {
+        charCountEl.classList.remove('error');
+        submitBtn.disabled = false;
+      } else {
+        charCountEl.classList.add('error');
+        submitBtn.disabled = true;
+      }
+    }
+
+    // Submit rejection
+    async function submitRejection() {
+      const reason = document.getElementById('rejectReason').value.trim();
+      if (reason.length < 7) {
+        showErrorModal(getTranslation('common.error', 'Error'), getTranslation('invoice.min_chars_error', 'Reason must be at least 7 characters'));
+        return;
+      }
+      
+      try {
+        const response = await fetch(`/api/invoices/public/${invoiceNumber}/reject`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email: clientEmail, reason })
+        });
+        const data = await response.json();
+        
+        if (data.success) {
+          closeModal();
+          showSuccessModal(
+            getTranslation('invoice.rejected_title', 'Rejection Submitted'),
+            getTranslation('invoice.rejected_message', 'Your rejection has been submitted. The seller will review and respond.')
+          );
+          setTimeout(() => location.reload(), 2000);
+        } else {
+          showErrorModal(getTranslation('common.error', 'Error'), data.error || getTranslation('invoice.reject_error', 'Failed to reject'));
+        }
+      } catch (e) {
+        showErrorModal(getTranslation('common.error', 'Error'), getTranslation('invoice.reject_error', 'Error rejecting invoice'));
+      }
+    }
+
+    // Open payment - show method selection if no link exists
+    async function openPayment() {
+      // If we already have a payment link, use it directly
+      if (currentInvoice.payment_link) {
+        window.open(currentInvoice.payment_link, '_blank');
+        return;
+      }
+      
+      // Otherwise, show payment method selection
+      await showPaymentMethodModal('pay');
+    }
+
+    // Actually open payment with selected method
+    async function doOpenPayment(paymentMethod) {
+      try {
+        let url = `/api/invoices/public/${invoiceNumber}/payment-link?email=${encodeURIComponent(clientEmail)}`;
+        if (paymentMethod) {
+          url += `&payment_method=${encodeURIComponent(paymentMethod)}`;
+        }
+        
+        const response = await fetch(url);
+        const data = await response.json();
+        
+        if (data.success && data.payment_link) {
+          currentInvoice.payment_link = data.payment_link;
+          currentInvoice.selected_payment_method = paymentMethod;
+          window.open(data.payment_link, '_blank');
+        } else {
+          showErrorModal(
+            getTranslation('invoice.payment_error_title', 'Payment Not Available'),
+            data.error || getTranslation('invoice.payment_error_message', 'Payment link is not available. Please contact the seller.')
+          );
+        }
+      } catch (e) {
+        showErrorModal(getTranslation('common.error', 'Error'), getTranslation('invoice.payment_error', 'Error loading payment'));
+      }
+    }
+
+    // Success modal
+    function showSuccessModal(title, message) {
+      document.getElementById('successTitle').textContent = title;
+      document.getElementById('successMessage').textContent = message;
+      document.getElementById('successModal').classList.add('active');
+    }
+
+    function closeSuccessModal() {
+      document.getElementById('successModal').classList.remove('active');
+    }
+
+    // Error modal
+    function showErrorModal(title, message) {
+      document.getElementById('errorTitle').textContent = title;
+      document.getElementById('errorMessage').textContent = message;
+      document.getElementById('errorModal').classList.add('active');
+    }
+
+    function closeErrorModal() {
+      document.getElementById('errorModal').classList.remove('active');
+    }
+
+    // Simple translation helper (can be enhanced with i18n library)
+    function getTranslation(key, fallback) {
+      // This can be connected to a proper i18n system
+      return fallback;
+    }
+
+    // Enter key on email input
+    document.addEventListener('DOMContentLoaded', () => {
+      document.getElementById('emailInput').addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') verifyEmail();
+      });
+      init();
+    });
+
+    // Handle RTL
+    function setDirection(dir) {
+      document.documentElement.dir = dir;
+      document.documentElement.lang = dir === 'rtl' ? 'ar' : 'en';
+    }
+  </script>
+</body>
+</html>

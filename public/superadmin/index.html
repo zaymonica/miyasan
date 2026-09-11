@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin - Misayan SaaS</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/js/branding.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 id="sidebarLogo">Misayan SaaS</h2>
+            <p>Super Admin</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <i class="fas fa-chart-line"></i> Dashboard
+            </a>
+            <a href="#" class="nav-item" data-page="tenants">
+                <i class="fas fa-building"></i> Tenants
+            </a>
+            <a href="#" class="nav-item" data-page="plans">
+                <i class="fas fa-box"></i> Plans
+            </a>
+            <a href="#" class="nav-item" data-page="plan-addons">
+                <i class="fas fa-puzzle-piece"></i> Plan Add-ons
+            </a>
+            <a href="#" class="nav-item" data-page="addon-purchases">
+                <i class="fas fa-shopping-cart"></i> Addon Purchases
+            </a>
+            <a href="#" class="nav-item" data-page="payment-gateways">
+                <i class="fas fa-credit-card"></i> Payment Gateways
+            </a>
+            <a href="#" class="nav-item" data-page="payments">
+                <i class="fas fa-receipt"></i> Payments
+            </a>
+            <a href="#" class="nav-item" data-page="analytics">
+                <i class="fas fa-chart-bar"></i> Analytics
+            </a>
+            <a href="#" class="nav-item" data-page="currencies">
+                <i class="fas fa-dollar-sign"></i> Currencies
+            </a>
+            <a href="#" class="nav-item" data-page="translations">
+                <i class="fas fa-language"></i> Translations
+            </a>
+            <a href="#" class="nav-item" data-page="landing">
+                <i class="fas fa-home"></i> Landing Page
+            </a>
+            <div class="nav-divider">Notifications</div>
+            <a href="#" class="nav-item" data-page="email-notifications">
+                <i class="fas fa-envelope"></i> Email Notifications
+            </a>
+            <div class="nav-divider">Extensions</div>
+            <a href="#" class="nav-item" data-page="system-addons">
+                <i class="fas fa-plug"></i> System Add-ons
+            </a>
+            <!-- WhatsApp Notifications temporarily disabled
+            <a href="#" class="nav-item" data-page="whatsapp-notifications">
+                <i class="fab fa-whatsapp"></i> WhatsApp Notifications
+            </a>
+            -->
+            <a href="#" class="nav-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> Logout
+            </a>
+        </nav>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <!-- Header -->
+        <header class="header">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-right">
+                <!-- Clock Display -->
+                <div class="header-clock" id="headerClock" style="display: none;">
+                    <div class="clock-time" id="clockTime">--:--:--</div>
+                    <div class="clock-date" id="clockDate">----</div>
+                </div>
+                <button class="rtl-toggle-btn" id="rtlToggleBtn" onclick="toggleRTL()" title="Toggle RTL/LTR">
+                    <i class="fas fa-exchange-alt"></i> RTL
+                </button>
+                <div class="user-dropdown">
+                    <button class="user-dropdown-toggle" id="userDropdownToggle">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="user-name" id="userName">Super Administrator</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown-menu" id="userDropdownMenu">
+                        <a href="#" class="dropdown-item" onclick="openSystemSettingsModal(); return false;">
+                            <i class="fas fa-cog"></i>
+                            <span>System Settings</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="openMetaSettingsModal(); return false;">
+                            <i class="fab fa-facebook"></i>
+                            <span>Meta/Facebook App</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="openPWASettingsModal(); return false;">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span data-i18n="pwa.settings">PWA Settings</span>
+                        </a>
+                        <a href="#" class="dropdown-item" onclick="openTimezoneSettingsModal(); return false;">
+                            <i class="fas fa-clock"></i>
+                            <span data-i18n="timezone.settings">Timezone Settings</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <div class="dropdown-item clock-toggle-item">
+                            <i class="fas fa-clock"></i>
+                            <span data-i18n="timezone.enable_clock">Enable Clock</span>
+                            <label class="switch switch-sm">
+                                <input type="checkbox" id="clockToggle" onchange="toggleClockDisplay()">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="logout(); return false;">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span>Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <!-- Content Area -->
+        <div class="content" id="content">
+            <!-- Dashboard will be loaded here -->
+        </div>
+    </div>
+
+    <!-- Modals will be added dynamically -->
+    <div id="modalContainer"></div>
+
+    <!-- Socket.IO for real-time WhatsApp notifications -->
+    <script src="/socket.io/socket.io.js"></script>
+    
+    <script src="js/rtl.js?v=2"></script>
+    <script src="js/i18n.js?v=5"></script>
+    <script src="js/modals.js?v=6"></script>
+    <script src="js/app.js?v=5"></script>
+    <script src="js/dashboard.js?v=2"></script>
+    <script src="js/tenants.js?v=2"></script>
+    <script src="js/plans.js?v=3"></script>
+    <script src="js/plan-addons.js?v=2"></script>
+    <script src="js/addon-purchases.js?v=2"></script>
+    <script src="js/payment-gateways.js?v=3"></script>
+    <script src="js/payments.js?v=2"></script>
+    <script src="js/analytics.js?v=2"></script>
+    <script src="js/currencies.js?v=2"></script>
+    <script src="js/translations.js?v=2"></script>
+    <script src="js/landing.js?v=2"></script>
+    <script src="js/notification-pages.js?v=2"></script>
+    <script src="js/system-settings.js?v=2"></script>
+    <script src="js/meta-settings.js?v=1"></script>
+    <script src="js/pwa-settings.js?v=2"></script>
+    <script src="js/timezone-settings.js?v=3"></script>
+    <script src="js/system-addons.js?v=1"></script>
+    <script>
+        // Global function to toggle RTL/LTR
+        function toggleRTL() {
+            if (!window.RTL) {
+                console.error('RTL module not loaded');
+                return;
+            }
+
+            // Toggle direction
+            window.RTL.toggleDirection();
+            
+            // Update button state
+            const btn = document.getElementById('rtlToggleBtn');
+            const currentDir = window.RTL.getCurrentDirection();
+            if (btn) {
+                btn.classList.toggle('active', currentDir === 'rtl');
+            }
+
+            // Show notification
+            const directionText = currentDir === 'rtl' ? 'RTL' : 'LTR';
+            if (window.showNotification) {
+                showNotification(`Direction changed to ${directionText}`, 'success');
+            }
+        }
+
+        // Update button state on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('rtlToggleBtn');
+            if (btn && window.RTL) {
+                const currentDir = window.RTL.getCurrentDirection();
+                btn.classList.toggle('active', currentDir === 'rtl');
+            }
+        });
+    </script>
+</body>
+</html>

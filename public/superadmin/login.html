@@ -1,0 +1,451 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Super Admin Login - Misayan SaaS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/js/branding.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            min-height: 100vh;
+            display: flex;
+            background: #f5f5f5;
+        }
+
+        .login-wrapper {
+            display: flex;
+            width: 100%;
+            min-height: 100vh;
+        }
+
+        /* Left side - Form (35%) */
+        .login-form-side {
+            width: 35%;
+            min-width: 380px;
+            background: white;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            padding: 40px;
+            box-shadow: 4px 0 20px rgba(0, 0, 0, 0.1);
+            z-index: 10;
+        }
+
+        .login-header {
+            text-align: center;
+            margin-bottom: 40px;
+        }
+
+        .login-header .logo {
+            max-height: 60px;
+            max-width: 200px;
+            margin-bottom: 20px;
+        }
+
+        .login-header .logo-icon {
+            font-size: 48px;
+            color: #00a149;
+            margin-bottom: 15px;
+        }
+
+        .login-header h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .login-header p {
+            color: #666;
+            font-size: 14px;
+        }
+
+        .login-header .badge {
+            display: inline-block;
+            background: linear-gradient(135deg, #00a149 0%, #319131 100%);
+            color: white;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 12px;
+            font-weight: 600;
+            margin-top: 10px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            color: #333;
+            font-weight: 500;
+            font-size: 14px;
+        }
+
+        .input-group {
+            position: relative;
+        }
+
+        .input-group i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 14px 15px 14px 45px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 14px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: #00a149;
+            box-shadow: 0 0 0 3px rgba(0, 161, 73, 0.1);
+        }
+
+        .btn-login {
+            width: 100%;
+            padding: 14px;
+            background: linear-gradient(135deg, #00a149 0%, #319131 100%);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+
+        .btn-login:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 20px rgba(0, 161, 73, 0.4);
+        }
+
+        .btn-login:active {
+            transform: translateY(0);
+        }
+
+        .btn-login:disabled {
+            opacity: 0.6;
+            cursor: not-allowed;
+            transform: none;
+        }
+
+        .alert {
+            padding: 12px 15px;
+            border-radius: 10px;
+            margin-bottom: 20px;
+            font-size: 14px;
+            display: none;
+        }
+
+        .alert.show {
+            display: block;
+        }
+
+        .alert-error {
+            background: #fee;
+            color: #c33;
+            border: 1px solid #fcc;
+        }
+
+        .alert-success {
+            background: #efe;
+            color: #3c3;
+            border: 1px solid #cfc;
+        }
+
+        .login-footer {
+            text-align: center;
+            margin-top: 30px;
+            font-size: 13px;
+            color: #666;
+        }
+
+        /* Right side - Image (65%) */
+        .login-image-side {
+            width: 65%;
+            position: relative;
+            overflow: hidden;
+            background: linear-gradient(135deg, #1a1a2e 0%, #16213e 50%, #0f3460 100%);
+        }
+
+        .login-bg-image {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #1a1a2e;
+            background-image: url('/images/bg-login/floating.webp');
+            background-size: cover;
+            background-position: center;
+            background-attachment: fixed;
+            opacity: 0.3;
+        }
+
+        .login-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: radial-gradient(ellipse at center, transparent 0%, rgba(0, 0, 0, 0.4) 100%);
+        }
+
+        /* Glowing effects */
+        .glow-effect {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(80px);
+            opacity: 0.5;
+            animation: pulse-glow 4s ease-in-out infinite;
+        }
+
+        .glow-1 {
+            width: 400px;
+            height: 400px;
+            background: rgba(0, 161, 73, 0.3);
+            top: 10%;
+            right: 20%;
+            animation-delay: 0s;
+        }
+
+        .glow-2 {
+            width: 300px;
+            height: 300px;
+            background: rgba(49, 145, 49, 0.3);
+            bottom: 20%;
+            left: 10%;
+            animation-delay: 2s;
+        }
+
+        .glow-3 {
+            width: 250px;
+            height: 250px;
+            background: rgba(0, 100, 150, 0.3);
+            top: 50%;
+            right: 10%;
+            animation-delay: 1s;
+        }
+
+        @keyframes pulse-glow {
+            0%, 100% {
+                transform: scale(1);
+                opacity: 0.5;
+            }
+            50% {
+                transform: scale(1.1);
+                opacity: 0.7;
+            }
+        }
+
+        /* Floating image */
+        .floating-image {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            width: 350px;
+            height: 350px;
+            z-index: 5;
+            animation: float 6s ease-in-out infinite;
+        }
+
+        .floating-image img {
+            width: 100%;
+            height: 100%;
+            object-fit: contain;
+            filter: drop-shadow(0 20px 40px rgba(0, 0, 0, 0.3));
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(-50%, -50%) translateY(0px) rotate(0deg);
+            }
+            25% {
+                transform: translate(-50%, -50%) translateY(-20px) rotate(2deg);
+            }
+            50% {
+                transform: translate(-50%, -50%) translateY(0px) rotate(0deg);
+            }
+            75% {
+                transform: translate(-50%, -50%) translateY(-15px) rotate(-2deg);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 1024px) {
+            .login-form-side {
+                width: 45%;
+                min-width: 350px;
+            }
+            .login-image-side {
+                width: 55%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .login-wrapper {
+                flex-direction: column;
+            }
+            .login-form-side {
+                width: 100%;
+                min-width: auto;
+                order: 2;
+                padding: 30px 20px;
+            }
+            .login-image-side {
+                width: 100%;
+                height: 200px;
+                order: 1;
+            }
+            .floating-image {
+                width: 150px;
+                height: 150px;
+            }
+            .glow-effect {
+                display: none;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="login-wrapper">
+        <!-- Left side - Form -->
+        <div class="login-form-side">
+            <div class="login-header">
+                <div id="logoContainer">
+                    <i class="fas fa-crown logo-icon"></i>
+                </div>
+                <h1>Super Admin</h1>
+                <p>Platform Management</p>
+                <span class="badge"><i class="fas fa-shield-alt"></i> Secure Access</span>
+            </div>
+
+            <div id="alert" class="alert"></div>
+
+            <form id="loginForm">
+                <div class="form-group">
+                    <label for="email">Email</label>
+                    <div class="input-group">
+                        <i class="fas fa-envelope"></i>
+                        <input type="email" id="email" class="form-control" required autofocus>
+                    </div>
+                </div>
+
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-group">
+                        <i class="fas fa-lock"></i>
+                        <input type="password" id="password" class="form-control" required>
+                    </div>
+                </div>
+
+                <button type="submit" id="loginBtn" class="btn-login">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+            </form>
+
+            <div class="login-footer">
+                &copy; 2025 Misayan SaaS. All rights reserved.
+            </div>
+        </div>
+
+        <!-- Right side - Image -->
+        <div class="login-image-side">
+            <div class="login-bg-image"></div>
+            <div class="login-overlay"></div>
+            <div class="glow-effect glow-1"></div>
+            <div class="glow-effect glow-2"></div>
+            <div class="glow-effect glow-3"></div>
+            <div class="floating-image">
+                <img src="/images/bg-login/floating.webp" alt="" onerror="this.src='/images/bg-login/floating.svg'; this.onerror=function(){this.parentElement.style.display='none'}">
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('loginForm');
+        const loginBtn = document.getElementById('loginBtn');
+        const alertDiv = document.getElementById('alert');
+
+        // Load branding logo
+        async function loadLogo() {
+            try {
+                const branding = await window.SystemBranding?.get();
+                if (branding && branding.system_logo) {
+                    document.getElementById('logoContainer').innerHTML = 
+                        `<img src="${branding.system_logo}" alt="Logo" class="logo">`;
+                }
+            } catch (e) {
+                console.log('Using default logo');
+            }
+        }
+        loadLogo();
+
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+
+            loginBtn.disabled = true;
+            loginBtn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Logging in...';
+
+            try {
+                const response = await fetch('/api/auth/superadmin/login', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify({ email, password })
+                });
+
+                const data = await response.json();
+
+                if (data.success) {
+                    localStorage.setItem('superadmin_token', data.data.token);
+                    showAlert('Login successful! Redirecting...', 'success');
+                    
+                    setTimeout(() => {
+                        window.location.href = '/superadmin';
+                    }, 1000);
+                } else {
+                    showAlert(data.message || 'Invalid credentials', 'error');
+                    loginBtn.disabled = false;
+                    loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+                }
+            } catch (error) {
+                console.error('Login error:', error);
+                showAlert('Connection error. Please try again.', 'error');
+                loginBtn.disabled = false;
+                loginBtn.innerHTML = '<i class="fas fa-sign-in-alt"></i> Login';
+            }
+        });
+
+        function showAlert(message, type) {
+            alertDiv.className = `alert alert-${type} show`;
+            alertDiv.textContent = message;
+        }
+
+        if (localStorage.getItem('superadmin_token')) {
+            window.location.href = '/superadmin';
+        }
+    </script>
+</body>
+</html>

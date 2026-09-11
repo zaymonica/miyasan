@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>WhatsApp Cloud - User Panel</title>
+    
+    <!-- CSS do Admin -->
+    <link rel="stylesheet" href="/admin/css/admin.css">
+    <link rel="stylesheet" href="/admin/css/whatsapp-cloud.css">
+    <link rel="stylesheet" href="/user/css/whatsapp-cloud-3col.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/branding.js"></script>
+</head>
+<body>
+    <!-- Página WhatsApp Cloud EXATA do Admin -->
+    <div id="whatsapp-cloud-page" class="page active" style="display: block;">
+        <!-- O conteúdo será renderizado pelo JavaScript -->
+    </div>
+
+    <!-- JavaScript do Admin -->
+    <script src="/admin/js/whatsapp-cloud.js"></script>
+    
+    <script>
+        // Configurar para modo USER
+        WhatsAppCloud.userMode = true;
+        
+        // Inicializar quando carregar
+        document.addEventListener('DOMContentLoaded', () => {
+            WhatsAppCloud.init();
+        });
+    </script>
+</body>
+</html>

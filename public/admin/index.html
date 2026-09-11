@@ -1,0 +1,2145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title data-i18n="menu.dashboard">Tenant Panel - Misayan SaaS</title>
+    <link rel="stylesheet" href="css/admin.css">
+    <link rel="stylesheet" href="css/mass-send.css">
+    <link rel="stylesheet" href="css/conversations.css">
+    <link rel="stylesheet" href="css/contacts.css">
+    <link rel="stylesheet" href="css/invoices.css">
+    <link rel="stylesheet" href="css/widget.css">
+    <link rel="stylesheet" href="css/profile.css">
+    <link rel="stylesheet" href="css/plan-management.css">
+    <link rel="stylesheet" href="css/biolink.css">
+    <link rel="stylesheet" href="css/whatsapp-cloud.css">
+    <link rel="stylesheet" href="/user/css/conversations-user.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="/socket.io/socket.io.js"></script>
+    <script src="/js/branding.js"></script>
+</head>
+<body>
+    <!-- Sidebar -->
+    <div class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <h2 id="sidebarLogo">Misayan</h2>
+            <p id="tenantName" data-i18n="common.tenant_panel">Tenant Panel</p>
+        </div>
+        <nav class="sidebar-nav">
+            <a href="#" class="nav-item active" data-page="dashboard">
+                <i class="fas fa-chart-line"></i> <span data-i18n="menu.dashboard">Dashboard</span>
+            </a>
+            <a href="#" class="nav-item" data-page="whatsapp">
+                <i class="fab fa-whatsapp"></i> <span data-i18n="menu.whatsapp_connection">WhatsApp</span>
+            </a>
+            <a href="#" class="nav-item" data-page="whatsapp-cloud">
+                <i class="fas fa-cloud"></i> <span data-i18n="menu.whatsapp_cloud">WhatsApp Cloud</span>
+            </a>
+            <a href="#" class="nav-item" data-page="conversations">
+                <i class="fas fa-comments"></i> <span data-i18n="menu.conversations">Conversations</span>
+            </a>
+            <a href="#" class="nav-item" data-page="stores">
+                <i class="fas fa-store"></i> <span data-i18n="menu.stores">Stores</span>
+            </a>
+            <a href="#" class="nav-item" data-page="departments">
+                <i class="fas fa-building"></i> <span data-i18n="menu.departments">Departments</span>
+            </a>
+            
+            <div class="nav-section-title" data-i18n="menu.woocommerce">WooCommerce</div>
+            <a href="#" class="nav-item nav-sub-item" data-page="woocommerce-products">
+                <i class="fas fa-shopping-cart"></i> <span data-i18n="menu.woocommerce_products">Products</span>
+            </a>
+            <a href="#" class="nav-item nav-sub-item" data-page="woocommerce-notifications">
+                <i class="fas fa-bell"></i> <span data-i18n="menu.woocommerce_notifications">Notifications</span>
+            </a>
+            <a href="#" class="nav-item nav-sub-item" data-page="woocommerce-settings">
+                <i class="fas fa-cog"></i> <span data-i18n="menu.woocommerce_settings">Settings</span>
+            </a>
+
+            <a href="#" class="nav-item" data-page="users">
+                <i class="fas fa-users"></i> <span data-i18n="menu.users">Users</span>
+            </a>
+            <a href="#" class="nav-item" data-page="contacts">
+                <i class="fas fa-address-book"></i> <span data-i18n="menu.contacts">Contacts</span>
+            </a>
+            <a href="#" class="nav-item" data-page="faqs">
+                <i class="fas fa-question-circle"></i> <span data-i18n="menu.faqs">FAQs</span>
+            </a>
+            <a href="#" class="nav-item" data-page="payments">
+                <i class="fas fa-credit-card"></i> <span data-i18n="menu.payments">Payments</span>
+            </a>
+            <a href="#" class="nav-item" data-page="ai-config">
+                <i class="fas fa-robot"></i> <span data-i18n="menu.ai_config">AI Configuration</span>
+            </a>
+            <a href="#" class="nav-item" data-page="mass-send">
+                <i class="fas fa-paper-plane"></i> <span data-i18n="menu.mass_send">Mass Send</span>
+            </a>
+            <a href="#" class="nav-item" data-page="invoices">
+                <i class="fas fa-file-invoice"></i> <span data-i18n="menu.invoices">Invoices & Quotes</span>
+            </a>
+            <a href="#" class="nav-item" data-page="widget">
+                <i class="fas fa-code"></i> <span data-i18n="menu.widget">Chat Widget</span>
+            </a>
+            <div class="nav-section-title" data-i18n="menu.integration">Integrations</div>
+            <a href="#" class="nav-item nav-sub-item" data-page="api-rest">
+                <i class="fas fa-plug"></i> <span data-i18n="menu.api_rest">REST API</span>
+            </a>
+            <a href="#" class="nav-item nav-sub-item" data-page="api-documentation">
+                <i class="fas fa-book"></i> <span data-i18n="menu.documentation">Documentation</span>
+            </a>
+            <a href="#" class="nav-item nav-sub-item" data-page="webhook">
+                <i class="fas fa-bolt"></i> <span data-i18n="menu.webhook">Webhook</span>
+            </a>
+            <a href="#" class="nav-item" data-page="biolink" data-feature="biolink">
+                <i class="fas fa-link"></i> <span data-i18n="menu.biolink">Bio Link</span>
+            </a>
+            <!-- Edit Profile disabled - tenants use system defaults
+            <a href="#" class="nav-item" data-page="profile">
+                <i class="fas fa-user"></i> <span data-i18n="menu.profile">Edit Profile</span>
+            </a>
+            -->
+            <a href="#" class="nav-item" onclick="logout()">
+                <i class="fas fa-sign-out-alt"></i> <span data-i18n="menu.logout">Logout</span>
+            </a>
+        </nav>
+    </div>
+
+    <!-- Sidebar Toggle Button -->
+    <button class="sidebar-toggle-btn" id="sidebarToggleBtn" title="Toggle Sidebar">
+        <i class="fas fa-chevron-left"></i>
+    </button>
+
+    <!-- Main Content -->
+    <div class="main-content">
+        <header class="header">
+            <button class="menu-toggle" id="menuToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+            <div class="header-right">
+                <button class="rtl-toggle-btn" id="rtlToggleBtn" onclick="toggleRTL()" title="Toggle RTL/LTR">
+                    <i class="fas fa-exchange-alt"></i> RTL
+                </button>
+                <div class="user-dropdown">
+                    <button class="user-dropdown-toggle" id="userDropdownToggle">
+                        <i class="fas fa-user-circle"></i>
+                        <span class="user-name" id="userName">Admin</span>
+                        <i class="fas fa-chevron-down"></i>
+                    </button>
+                    <div class="user-dropdown-menu" id="userDropdownMenu">
+                        <a href="#plan-management" class="dropdown-item">
+                            <i class="fas fa-box"></i>
+                            <span data-i18n="menu.plan_management">Manage Plan & Resources</span>
+                        </a>
+                        <a href="#profile" class="dropdown-item" onclick="navigateTo('profile'); return false;">
+                            <i class="fas fa-cog"></i>
+                            <span data-i18n="menu.settings">Settings</span>
+                        </a>
+                        <div class="dropdown-divider"></div>
+                        <a href="#" class="dropdown-item" onclick="logout(); return false;">
+                            <i class="fas fa-sign-out-alt"></i>
+                            <span data-i18n="menu.logout">Logout</span>
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </header>
+
+        <div class="content">
+            <!-- Dashboard Page -->
+            <div id="dashboard-page" class="page active">
+                <!-- Conversations Section -->
+                <div class="dashboard-section">
+                    <h2 class="section-title" data-i18n="dashboard.conversations_section">Conversations</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card messages-card clickable" onclick="navigateTo('conversations')">
+                            <div class="stat-content">
+                                <div class="stat-number" id="todayMessages">0</div>
+                                <div class="stat-breakdown" id="todayMessagesBreakdown">Web: 0 · Cloud: 0</div>
+                                <h3 data-i18n="dashboard.conversations_today">Today</h3>
+                            </div>
+                            <div class="stat-card-header">
+                                <div class="stat-icon">💬</div>
+                            </div>
+                        </div>
+                        <div class="stat-card waiting-card clickable" onclick="navigateTo('conversations')">
+                            <div class="stat-content">
+                                <div class="stat-number" id="waitingConversations">0</div>
+                                <div class="stat-breakdown" id="waitingConversationsBreakdown">Web: 0 · Cloud: 0</div>
+                                <h3 data-i18n="dashboard.waiting_conversations">Waiting</h3>
+                            </div>
+                            <div class="stat-card-header">
+                                <div class="stat-icon">⏳</div>
+                            </div>
+                        </div>
+                        <div class="stat-card active-card clickable" onclick="navigateTo('conversations')">
+                            <div class="stat-content">
+                                <div class="stat-number" id="activeConversations">0</div>
+                                <div class="stat-breakdown" id="activeConversationsBreakdown">Web: 0 · Cloud: 0</div>
+                                <h3 data-i18n="dashboard.active_conversations">In Progress</h3>
+                            </div>
+                            <div class="stat-card-header">
+                                <div class="stat-icon">🟢</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoices Section -->
+                <div class="dashboard-section">
+                    <h2 class="section-title" data-i18n="dashboard.invoices_section">Invoices & Quotes</h2>
+                    <div class="stats-grid">
+                        <div class="stat-card invoice-pending-card clickable" onclick="navigateTo('invoices')">
+                            <div class="stat-content">
+                                <div class="stat-number" id="invoicesPending">0</div>
+                                <h3 data-i18n="dashboard.invoices_pending">Pending</h3>
+                            </div>
+                            <div class="stat-card-header">
+                                <div class="stat-icon">📋</div>
+                            </div>
+                        </div>
+                        <div class="stat-card invoice-accepted-card clickable" onclick="navigateTo('invoices')">
+                            <div class="stat-content">
+                                <div class="stat-number" id="invoicesAccepted">0</div>
+                                <h3 data-i18n="dashboard.invoices_accepted">Accepted</h3>
+                            </div>
+                            <div class="stat-card-header">
+                                <div class="stat-icon">✅</div>
+                            </div>
+                        </div>
+                        <div class="stat-card invoice-paid-card clickable" onclick="navigateTo('invoices')">
+                            <div class="stat-content">
+                                <div class="stat-number" id="invoicesPaid">0</div>
+                                <h3 data-i18n="dashboard.invoices_paid">Paid</h3>
+                            </div>
+                            <div class="stat-card-header">
+                                <div class="stat-icon">💰</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Chart and Users -->
+                <div class="dashboard-grid">
+                    <div class="chart-container">
+                        <h3 data-i18n="dashboard.messages_per_hour">Messages per Hour</h3>
+                        <canvas id="hourlyChart"></canvas>
+                    </div>
+                    <div class="users-list-container">
+                        <h3 data-i18n="dashboard.active_users">Active Users</h3>
+                        <div id="dashboardUsersList" class="users-list">
+                            <p data-i18n="common.loading">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Stores Page -->
+            <div id="stores-page" class="page">
+                <div class="page-header">
+                    <h1 data-i18n="stores.title">Manage Stores</h1>
+                    <button class="btn btn-primary" onclick="showAddStoreModal()">
+                        <i class="fas fa-plus"></i> <span data-i18n="stores.add">Add Store</span>
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="stores.name">Name</th>
+                                    <th data-i18n="stores.users_count">Users</th>
+                                    <th data-i18n="stores.actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="storesTableBody">
+                                <tr>
+                                    <td colspan="3" style="text-align: center;" data-i18n="common.loading">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Departments Page -->
+            <div id="departments-page" class="page">
+                <div class="page-header">
+                    <h1 data-i18n="departments.title">Manage Departments</h1>
+                    <button class="btn btn-primary" onclick="showAddDepartmentModal()">
+                        <i class="fas fa-plus"></i> <span data-i18n="departments.add">Add Department</span>
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th data-i18n="departments.name" style="width: 25%">Name</th>
+                                    <th data-i18n="departments.description" style="width: 40%">Description</th>
+                                    <th data-i18n="departments.users_count" style="width: 10%">Users</th>
+                                    <th data-i18n="departments.created_at" style="width: 15%">Created</th>
+                                    <th data-i18n="departments.actions" style="width: 10%">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="departmentsTableBody">
+                                <tr>
+                                    <td colspan="5" style="text-align: center;" data-i18n="common.loading">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Users Page -->
+            <div id="users-page" class="page">
+                <div class="page-header">
+                    <h1 data-i18n="users.title">Manage Users</h1>
+                    <button class="btn btn-primary" onclick="showAddUserModal()">
+                        <i class="fas fa-plus"></i> <span data-i18n="users.add">Add User</span>
+                    </button>
+                </div>
+                <div class="card">
+                    <div class="table-container">
+                        <table>
+                            <thead>
+                                <tr>
+                                    <th>Username</th>
+                                    <th>Link to</th>
+                                    <th data-i18n="users.status">Status</th>
+                                    <th data-i18n="users.actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="usersTableBody">
+                                <tr>
+                                    <td colspan="4" style="text-align: center;" data-i18n="common.loading">Loading...</td>
+                                </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WhatsApp Page -->
+            <div id="whatsapp-page" class="page">
+                <div class="page-header">
+                    <h1 data-i18n="whatsapp.title">WhatsApp Web</h1>
+                </div>
+
+                <!-- Connection Status Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 data-i18n="whatsapp.connection_status">Connection Status</h3>
+                        <span id="whatsapp-status-badge" class="status-badge status-disconnected">
+                            <i class="fas fa-circle"></i>
+                            <span data-i18n="whatsapp.status.disconnected">Disconnected</span>
+                        </span>
+                    </div>
+                    <div class="card-body">
+                        <div id="whatsapp-connection-info" class="connection-info">
+                            <p data-i18n="whatsapp.not_connected">WhatsApp is not connected. Click the button below to connect.</p>
+                        </div>
+                        
+                        <!-- QR Code Container -->
+                        <div id="qr-code-container" class="qr-code-container" style="display: none;">
+                            <h4 data-i18n="whatsapp.scan_qr">Scan QR Code with WhatsApp</h4>
+                            <div id="qr-code-display" class="qr-code-display">
+                                <img id="qr-code-image" src="" alt="QR Code">
+                            </div>
+                            <p class="qr-instructions" data-i18n="whatsapp.qr_instructions">
+                                Open WhatsApp on your phone → Settings → Linked Devices → Link a Device
+                            </p>
+                            <div id="qr-attempts" class="qr-attempts"></div>
+                        </div>
+
+                        <!-- Connection Actions -->
+                        <div class="connection-actions">
+                            <button id="btn-connect-whatsapp" class="btn btn-primary" onclick="connectWhatsApp()">
+                                <i class="fab fa-whatsapp"></i>
+                                <span data-i18n="whatsapp.connect">Connect WhatsApp</span>
+                            </button>
+                            <button id="btn-disconnect-whatsapp" class="btn btn-danger" onclick="disconnectWhatsApp()" style="display: none;">
+                                <i class="fas fa-unlink"></i>
+                                <span data-i18n="whatsapp.disconnect">Disconnect</span>
+                            </button>
+                            <button id="btn-clear-session" class="btn btn-warning" onclick="clearWhatsAppSession()">
+                                <i class="fas fa-trash"></i>
+                                <span data-i18n="whatsapp.clear_session">Clear Session</span>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Bot Settings Card -->
+                <div class="card">
+                    <div class="card-header">
+                        <h3 data-i18n="whatsapp.bot_settings">Bot Settings</h3>
+                    </div>
+                    <div class="card-body">
+                        <div class="bot-settings-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px;">
+                            <!-- Bot Enable/Disable -->
+                            <div class="bot-setting-item" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div>
+                                    <h4 style="margin: 0 0 5px 0;" data-i18n="whatsapp.bot_enabled">Auto-Reply Bot</h4>
+                                    <p style="margin: 0; font-size: 12px; color: #666;" data-i18n="whatsapp.bot_enabled_desc">Enable automatic FAQ and welcome message responses</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="bot-enabled-toggle" onchange="toggleBotSetting('bot_enabled', this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                            
+                            <!-- Group Enable/Disable -->
+                            <div class="bot-setting-item" style="display: flex; align-items: center; justify-content: space-between; padding: 15px; background: #f8f9fa; border-radius: 8px;">
+                                <div>
+                                    <h4 style="margin: 0 0 5px 0;" data-i18n="whatsapp.group_enabled">Group Responses</h4>
+                                    <p style="margin: 0; font-size: 12px; color: #666;" data-i18n="whatsapp.group_enabled_desc">Allow bot to respond in WhatsApp groups</p>
+                                </div>
+                                <label class="toggle-switch">
+                                    <input type="checkbox" id="group-enabled-toggle" onchange="toggleBotSetting('group_enabled', this.checked)">
+                                    <span class="toggle-slider"></span>
+                                </label>
+                            </div>
+                        </div>
+                        <p style="margin-top: 15px; font-size: 12px; color: #888;">
+                            <i class="fas fa-info-circle"></i>
+                            <span data-i18n="whatsapp.bot_manual_note">Note: When you manually respond to a conversation, the bot will automatically stop responding to that conversation.</span>
+                        </p>
+                    </div>
+                </div>
+
+                <!-- Test Message Send Card -->
+                <div id="send-message-card" class="card" style="display: none;">
+                    <div class="card-header">
+                        <h3 data-i18n="whatsapp.test_send_message">Test Message Send</h3>
+                    </div>
+                    <div class="card-body">
+                        <form id="send-message-form" onsubmit="sendWhatsAppMessage(event)">
+                            <div class="form-group">
+                                <label data-i18n="whatsapp.phone_number">Phone Number</label>
+                                <input type="text" id="message-phone" class="form-control" required>
+                                <small data-i18n="whatsapp.phone_format">Format: Country code + number (e.g., 5511999999999)</small>
+                            </div>
+                            <div class="form-group">
+                                <label data-i18n="whatsapp.message">Message</label>
+                                <textarea id="message-text" class="form-control" rows="4" 
+                                          placeholder="Type your message..." required></textarea>
+                            </div>
+                            <button type="submit" class="btn btn-primary">
+                                <i class="fas fa-paper-plane"></i>
+                                <span data-i18n="whatsapp.send">Send</span>
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+
+            <div id="whatsapp-cloud-page" class="page">
+                <div class="page-header">
+                    <h1 data-i18n="whatsapp_cloud.title">WhatsApp Cloud Workspace</h1>
+                </div>
+
+                <div class="whatsapp-cloud-layout">
+                    <aside class="wc-sidebar">
+                        <div class="wc-sidebar-head">
+                            <div>
+                                <div class="wc-sidebar-title" data-i18n="whatsapp_cloud.accounts_title">Accounts</div>
+                                <div class="wc-sidebar-subtitle" data-i18n="whatsapp_cloud.accounts_subtitle">Manage official API numbers</div>
+                            </div>
+                            <button class="btn btn-sm btn-primary" id="wcAddAccountBtn">
+                                <i class="fas fa-plus"></i>
+                                <span data-i18n="whatsapp_cloud.add_account">Add Account</span>
+                            </button>
+                        </div>
+                        <div class="wc-sidebar-search">
+                            <i class="fas fa-search"></i>
+                            <input id="wcAccountSearch" type="text" data-i18n-placeholder="whatsapp_cloud.search_accounts" placeholder="Search accounts">
+                        </div>
+                        <div class="wc-account-list" id="wcAccountList"></div>
+                        <div class="wc-empty-state" id="wcAccountEmpty">
+                            <div class="wc-empty-icon">
+                                <i class="fas fa-cloud"></i>
+                            </div>
+                            <h3 data-i18n="whatsapp_cloud.no_accounts_title">No accounts connected</h3>
+                            <p data-i18n="whatsapp_cloud.no_accounts_description">Connect official WhatsApp numbers to unlock Cloud features.</p>
+                            <button class="btn btn-primary" id="wcEmptyConnectBtn">
+                                <i class="fas fa-link"></i>
+                                <span data-i18n="whatsapp_cloud.connect_account">Connect Account</span>
+                            </button>
+                        </div>
+                    </aside>
+
+                    <section class="wc-content">
+                        <div class="wc-toolbar">
+                            <div class="wc-active-account">
+                                <span data-i18n="whatsapp_cloud.active_account">Active Account</span>
+                                <div class="wc-account-pill" id="wcActiveAccountLabel" data-i18n="whatsapp_cloud.no_active_account">No account selected</div>
+                            </div>
+                            <div class="wc-toolbar-actions">
+                                <button class="btn btn-secondary btn-sm" id="wcRefreshAccounts">
+                                    <i class="fas fa-rotate"></i>
+                                    <span data-i18n="whatsapp_cloud.refresh">Refresh</span>
+                                </button>
+                                <button class="btn btn-primary btn-sm" id="wcConnectAccountShortcut">
+                                    <i class="fas fa-link"></i>
+                                    <span data-i18n="whatsapp_cloud.connect_account">Connect Account</span>
+                                </button>
+                            </div>
+                        </div>
+
+                        <div class="wc-tabs" id="wcTabs">
+                            <button class="wc-tab active" data-wc-tab="conversations" data-i18n="whatsapp_cloud.tab_conversations">Conversations</button>
+                            <button class="wc-tab" data-wc-tab="flow-builder" data-i18n="whatsapp_cloud.tab_flow_builder">Flow Builder</button>
+                            <button class="wc-tab" data-wc-tab="faq" data-i18n="whatsapp_cloud.tab_faq">FAQ</button>
+                            <button class="wc-tab" data-wc-tab="campaigns" data-i18n="whatsapp_cloud.tab_campaigns">Mass Campaigns</button>
+                            <button class="wc-tab" data-wc-tab="connection" data-i18n="whatsapp_cloud.tab_connection">Official API Connection</button>
+                        </div>
+
+                        <div class="wc-panels">
+                            <div class="wc-panel active" data-wc-panel="conversations">
+                                <div class="wc-panel-header">
+                                    <div>
+                                        <h2 data-i18n="whatsapp_cloud.conversations_title">Cloud Conversations</h2>
+                                        <p data-i18n="whatsapp_cloud.conversations_description">Monitor and manage official API conversations without leaving the workspace.</p>
+                                    </div>
+                                    <div class="wc-panel-actions">
+                                        <label class="form-label" data-i18n="whatsapp_cloud.account_selector_label">Account</label>
+                                        <select class="form-control wc-account-select" data-i18n="whatsapp_cloud.account_select_placeholder"></select>
+                                        <button class="btn btn-secondary" id="wcOpenInboxBtn">
+                                            <i class="fas fa-comments"></i>
+                                            <span data-i18n="whatsapp_cloud.open_inbox">Open Full Inbox</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="wc-stats-grid">
+                                    <div class="wc-stat-card">
+                                        <div class="wc-stat-value" id="wcStatTotal">0</div>
+                                        <div class="wc-stat-label" data-i18n="whatsapp_cloud.metrics_total">Total</div>
+                                    </div>
+                                    <div class="wc-stat-card">
+                                        <div class="wc-stat-value" id="wcStatActive">0</div>
+                                        <div class="wc-stat-label" data-i18n="whatsapp_cloud.metrics_active">Active</div>
+                                    </div>
+                                    <div class="wc-stat-card">
+                                        <div class="wc-stat-value" id="wcStatWaiting">0</div>
+                                        <div class="wc-stat-label" data-i18n="whatsapp_cloud.metrics_waiting">Waiting</div>
+                                    </div>
+                                    <div class="wc-stat-card">
+                                        <div class="wc-stat-value" id="wcStatClosed">0</div>
+                                        <div class="wc-stat-label" data-i18n="whatsapp_cloud.metrics_closed">Closed</div>
+                                    </div>
+                                </div>
+                                <div class="wc-empty-panel">
+                                    <i class="fas fa-comments"></i>
+                                    <h3 data-i18n="whatsapp_cloud.conversations_empty_title">No conversations yet</h3>
+                                    <p data-i18n="whatsapp_cloud.conversations_empty_description">Incoming messages from Cloud API numbers will appear here.</p>
+                                </div>
+                            </div>
+
+                            <div class="wc-panel" data-wc-panel="flow-builder">
+                                <div class="wc-panel-header">
+                                    <div>
+                                        <h2 data-i18n="whatsapp_cloud.flow_title">Flow Builder</h2>
+                                        <p data-i18n="whatsapp_cloud.flow_subtitle">Design multi-step experiences with templates, automations, and approvals.</p>
+                                    </div>
+                                    <div class="wc-panel-actions">
+                                        <label class="form-label" data-i18n="whatsapp_cloud.account_selector_label">Account</label>
+                                        <select class="form-control wc-account-select" data-i18n="whatsapp_cloud.account_select_placeholder"></select>
+                                        <button class="btn btn-primary">
+                                            <i class="fas fa-plus"></i>
+                                            <span data-i18n="whatsapp_cloud.flow_start_template">New Flow</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="wc-flow-layout">
+                                    <div class="wc-flow-palette">
+                                        <h3 data-i18n="whatsapp_cloud.flow_palette">Blocks</h3>
+                                        <div class="wc-flow-section">
+                                            <div class="wc-flow-section-title" data-i18n="whatsapp_cloud.flow_triggers">Triggers</div>
+                                            <div class="wc-flow-chip" data-i18n="whatsapp_cloud.flow_chip_keyword">Keyword</div>
+                                            <div class="wc-flow-chip" data-i18n="whatsapp_cloud.flow_chip_button_reply">Button Reply</div>
+                                            <div class="wc-flow-chip" data-i18n="whatsapp_cloud.flow_chip_webhook">Webhook</div>
+                                        </div>
+                                        <div class="wc-flow-section">
+                                            <div class="wc-flow-section-title" data-i18n="whatsapp_cloud.flow_messages">Messages</div>
+                                            <div class="wc-flow-chip" data-i18n="whatsapp_cloud.flow_chip_text">Text</div>
+                                            <div class="wc-flow-chip" data-i18n="whatsapp_cloud.flow_chip_template">Template</div>
+                                            <div class="wc-flow-chip" data-i18n="whatsapp_cloud.flow_chip_media">Media</div>
+                                        </div>
+                                        <div class="wc-flow-section">
+                                            <div class="wc-flow-section-title" data-i18n="whatsapp_cloud.flow_logic">Logic</div>
+                                            <div class="wc-flow-chip" data-i18n="whatsapp_cloud.flow_chip_conditions">Conditions</div>
+                                            <div class="wc-flow-chip" data-i18n="whatsapp_cloud.flow_chip_wait">Wait</div>
+                                            <div class="wc-flow-chip" data-i18n="whatsapp_cloud.flow_chip_assign">Assign</div>
+                                        </div>
+                                        <div class="wc-flow-section">
+                                            <div class="wc-flow-section-title" data-i18n="whatsapp_cloud.flow_integrations">Integrations</div>
+                                            <div class="wc-flow-chip" data-i18n="whatsapp_cloud.flow_chip_webhook">Webhook</div>
+                                            <div class="wc-flow-chip" data-i18n="whatsapp_cloud.flow_chip_api_call">API Call</div>
+                                            <div class="wc-flow-chip" data-i18n="whatsapp_cloud.flow_chip_crm_sync">CRM Sync</div>
+                                        </div>
+                                    </div>
+                                    <div class="wc-flow-canvas">
+                                        <div class="wc-flow-canvas-header">
+                                            <div data-i18n="whatsapp_cloud.flow_canvas_title">Canvas</div>
+                                            <button class="btn btn-secondary btn-sm">
+                                                <i class="fas fa-layer-group"></i>
+                                                <span data-i18n="whatsapp_cloud.flow_templates">Templates</span>
+                                            </button>
+                                        </div>
+                                        <div class="wc-flow-canvas-body">
+                                            <div class="wc-empty-panel">
+                                                <i class="fas fa-project-diagram"></i>
+                                                <h3 data-i18n="whatsapp_cloud.flow_canvas_description">Drop blocks here to build your flow.</h3>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="wc-flow-properties">
+                                        <h3 data-i18n="whatsapp_cloud.flow_properties_title">Properties</h3>
+                                        <p data-i18n="whatsapp_cloud.flow_properties_description">Select a block to configure messages, routing, and approvals.</p>
+                                        <div class="form-group">
+                                            <label data-i18n="whatsapp_cloud.flow_properties_owner">Owner</label>
+                                            <input class="form-control" type="text" data-i18n-placeholder="whatsapp_cloud.flow_properties_owner_placeholder" placeholder="Operations Team">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="whatsapp_cloud.flow_properties_status">Status</label>
+                                            <select class="form-control">
+                                                <option data-i18n="whatsapp_cloud.status_pending">Pending</option>
+                                                <option data-i18n="whatsapp_cloud.status_connected">Active</option>
+                                                <option data-i18n="whatsapp_cloud.status_disconnected">Paused</option>
+                                            </select>
+                                        </div>
+                                        <button class="btn btn-primary">
+                                            <i class="fas fa-save"></i>
+                                            <span data-i18n="whatsapp_cloud.flow_properties_save">Save Flow</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="wc-panel" data-wc-panel="faq">
+                                <div class="wc-panel-header">
+                                    <div>
+                                        <h2 data-i18n="whatsapp_cloud.faq_title">Cloud FAQ</h2>
+                                        <p data-i18n="whatsapp_cloud.faq_description">Centralize knowledge base answers for official API conversations.</p>
+                                    </div>
+                                    <div class="wc-panel-actions">
+                                        <label class="form-label" data-i18n="whatsapp_cloud.account_selector_label">Account</label>
+                                        <select class="form-control wc-account-select" data-i18n="whatsapp_cloud.account_select_placeholder"></select>
+                                        <button class="btn btn-primary">
+                                            <i class="fas fa-plus"></i>
+                                            <span data-i18n="whatsapp_cloud.faq_add">Add FAQ</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="wc-search-row">
+                                    <input class="form-control" type="text" data-i18n-placeholder="whatsapp_cloud.faq_search_placeholder" placeholder="Search FAQs">
+                                    <button class="btn btn-secondary">
+                                        <i class="fas fa-filter"></i>
+                                        <span data-i18n="whatsapp_cloud.faq_filters">Filters</span>
+                                    </button>
+                                </div>
+                                <div class="wc-empty-panel">
+                                    <i class="fas fa-question-circle"></i>
+                                    <h3 data-i18n="whatsapp_cloud.faq_empty_title">No FAQs yet</h3>
+                                    <p data-i18n="whatsapp_cloud.faq_empty_description">Create FAQs to power faster replies and automations.</p>
+                                </div>
+                            </div>
+
+                            <div class="wc-panel" data-wc-panel="campaigns">
+                                <div class="wc-panel-header">
+                                    <div>
+                                        <h2 data-i18n="whatsapp_cloud.campaigns_title">Mass Campaigns</h2>
+                                        <p data-i18n="whatsapp_cloud.campaigns_description">Send compliant template campaigns using Meta-approved content.</p>
+                                    </div>
+                                    <div class="wc-panel-actions">
+                                        <label class="form-label" data-i18n="whatsapp_cloud.account_selector_label">Account</label>
+                                        <select class="form-control wc-account-select" data-i18n="whatsapp_cloud.account_select_placeholder"></select>
+                                        <button class="btn btn-secondary" id="wcTemplateSyncBtn">
+                                            <i class="fas fa-cloud-download-alt"></i>
+                                            <span data-i18n="whatsapp_cloud.campaigns_template_sync">Sync Templates</span>
+                                        </button>
+                                        <button class="btn btn-primary" id="wcCreateTemplateBtn">
+                                            <i class="fas fa-plus"></i>
+                                            <span data-i18n="whatsapp_cloud.campaigns_template_create">Create Template</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                <div class="wc-campaign-grid">
+                                    <div class="wc-campaign-card">
+                                        <h3 data-i18n="whatsapp_cloud.campaigns_template_section">Template</h3>
+                                        <label data-i18n="whatsapp_cloud.campaigns_template_label">Template</label>
+                                        <select class="form-control">
+                                            <option data-i18n="whatsapp_cloud.campaigns_template_placeholder">Select a template</option>
+                                        </select>
+                                        <label data-i18n="whatsapp_cloud.campaigns_template_source_label">Source</label>
+                                        <div class="wc-chip-row">
+                                            <span class="wc-chip" data-i18n="whatsapp_cloud.campaigns_source_meta">Meta Business</span>
+                                            <span class="wc-chip" data-i18n="whatsapp_cloud.campaigns_source_custom">Created in Workspace</span>
+                                        </div>
+                                    </div>
+                                    <div class="wc-campaign-card">
+                                        <h3 data-i18n="whatsapp_cloud.campaigns_audience_section">Audience</h3>
+                                        <label data-i18n="whatsapp_cloud.campaigns_audience_label">List</label>
+                                        <select class="form-control">
+                                            <option data-i18n="whatsapp_cloud.campaigns_audience_placeholder">Choose a list</option>
+                                        </select>
+                                        <label data-i18n="whatsapp_cloud.campaigns_filters_label">Filters</label>
+                                        <div class="wc-chip-row">
+                                            <span class="wc-chip" data-i18n="whatsapp_cloud.campaigns_filter_tags">Tags</span>
+                                            <span class="wc-chip" data-i18n="whatsapp_cloud.campaigns_filter_activity">Last activity</span>
+                                            <span class="wc-chip" data-i18n="whatsapp_cloud.campaigns_filter_optin">Opt-in</span>
+                                        </div>
+                                    </div>
+                                    <div class="wc-campaign-card">
+                                        <h3 data-i18n="whatsapp_cloud.campaigns_schedule_section">Schedule</h3>
+                                        <label data-i18n="whatsapp_cloud.campaigns_schedule_label">Send time</label>
+                                        <input class="form-control" type="datetime-local">
+                                        <label data-i18n="whatsapp_cloud.campaigns_schedule_timezone">Time zone</label>
+                                        <select class="form-control">
+                                            <option>UTC</option>
+                                            <option>America/New_York</option>
+                                            <option>Europe/London</option>
+                                        </select>
+                                        <label data-i18n="whatsapp_cloud.campaigns_schedule_window">Send window</label>
+                                        <div class="wc-chip-row">
+                                            <span class="wc-chip" data-i18n="whatsapp_cloud.campaigns_window_business">Business hours</span>
+                                            <span class="wc-chip" data-i18n="whatsapp_cloud.campaigns_window_any">Any time</span>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="wc-preview">
+                                    <div>
+                                        <h3 data-i18n="whatsapp_cloud.campaigns_preview_title">Preview</h3>
+                                        <p data-i18n="whatsapp_cloud.campaigns_preview_description">Preview content for the selected template and language.</p>
+                                    </div>
+                                    <div class="wc-preview-box">
+                                        <div class="wc-preview-message">
+                                            <div class="wc-preview-title" data-i18n="whatsapp_cloud.campaigns_preview_title_text">Template Title</div>
+                                            <div class="wc-preview-body" data-i18n="whatsapp_cloud.campaigns_preview_body_text">Your message preview will appear here.</div>
+                                        </div>
+                                    </div>
+                                    <div class="wc-preview-actions">
+                                        <button class="btn btn-secondary">
+                                            <span data-i18n="whatsapp_cloud.campaigns_save_draft">Save Draft</span>
+                                        </button>
+                                        <button class="btn btn-primary">
+                                            <span data-i18n="whatsapp_cloud.campaigns_send">Schedule Campaign</span>
+                                        </button>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="wc-panel" data-wc-panel="connection">
+                                <div class="wc-panel-header">
+                                    <div>
+                                        <h2 data-i18n="whatsapp_cloud.connection_title">Official API Connection</h2>
+                                        <p data-i18n="whatsapp_cloud.connection_description">Connect Cloud API credentials securely and manage webhook configuration.</p>
+                                    </div>
+                                    <div class="wc-panel-actions">
+                                        <label class="form-label" data-i18n="whatsapp_cloud.account_selector_label">Account</label>
+                                        <select class="form-control wc-account-select" id="wcConnectionAccountSelect" data-i18n="whatsapp_cloud.account_select_placeholder"></select>
+                                    </div>
+                                </div>
+                                <div class="wc-status-grid">
+                                    <div class="wc-status-card">
+                                        <span data-i18n="whatsapp_cloud.connection_account_status">Account status</span>
+                                        <strong id="wcAccountStatus" data-i18n="whatsapp_cloud.status_pending">Pending</strong>
+                                    </div>
+                                    <div class="wc-status-card">
+                                        <span data-i18n="whatsapp_cloud.connection_webhook_status">Webhook</span>
+                                        <strong data-i18n="whatsapp_cloud.status_disconnected">Disconnected</strong>
+                                    </div>
+                                    <div class="wc-status-card">
+                                        <span data-i18n="whatsapp_cloud.connection_templates_status">Template sync</span>
+                                        <strong data-i18n="whatsapp_cloud.status_pending">Pending</strong>
+                                    </div>
+                                </div>
+                                <form id="wcConnectionForm" class="wc-form">
+                                    <div class="wc-form-grid">
+                                        <div class="form-group">
+                                            <label data-i18n="whatsapp_cloud.connection_account_name">Account name</label>
+                                            <input class="form-control" type="text" id="wcConnectionName" data-i18n-placeholder="whatsapp_cloud.connection_account_name_placeholder" placeholder="Main Cloud Number">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="whatsapp_cloud.connection_waba_id">WABA ID</label>
+                                            <input class="form-control" type="text" id="wcConnectionWabaId" data-i18n-placeholder="whatsapp_cloud.connection_waba_id_placeholder" placeholder="WhatsApp Business Account ID">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="whatsapp_cloud.connection_phone_number_id">Phone Number ID</label>
+                                            <input class="form-control" type="text" id="wcConnectionPhoneId" data-i18n-placeholder="whatsapp_cloud.connection_phone_number_id_placeholder" placeholder="Phone Number ID">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="whatsapp_cloud.connection_app_id">App ID</label>
+                                            <input class="form-control" type="text" id="wcConnectionAppId" data-i18n-placeholder="whatsapp_cloud.connection_app_id_placeholder" placeholder="Meta App ID">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="whatsapp_cloud.connection_access_token">Access token</label>
+                                            <input class="form-control" type="password" id="wcConnectionAccessToken" data-i18n-placeholder="whatsapp_cloud.connection_access_token_placeholder" placeholder="Paste access token">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="whatsapp_cloud.connection_verify_token">Webhook verify token</label>
+                                            <input class="form-control" type="text" id="wcConnectionVerifyToken" data-i18n-placeholder="whatsapp_cloud.connection_verify_token_placeholder" placeholder="Webhook verify token">
+                                        </div>
+                                        <div class="form-group">
+                                            <label data-i18n="whatsapp_cloud.connection_app_secret">App secret</label>
+                                            <input class="form-control" type="password" id="wcConnectionAppSecret" data-i18n-placeholder="whatsapp_cloud.connection_app_secret_placeholder" placeholder="Meta App Secret">
+                                        </div>
+                                    </div>
+                                    <div class="wc-form-actions">
+                                        <button class="btn btn-secondary" type="button" id="wcRotateTokenBtn">
+                                            <span data-i18n="whatsapp_cloud.connection_rotate">Rotate Token</span>
+                                        </button>
+                                        <button class="btn btn-secondary" type="button" id="wcTestConnectionBtn">
+                                            <span data-i18n="whatsapp_cloud.connection_test">Test Connection</span>
+                                        </button>
+                                        <button class="btn btn-primary" type="submit">
+                                            <span data-i18n="whatsapp_cloud.connection_save">Save Connection</span>
+                                        </button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </section>
+                </div>
+            </div>
+
+            <!-- Conversations Page -->
+            <div id="conversations-page" class="page"></div>
+
+            <!-- Contacts Page -->
+            <div id="contacts-page" class="page">
+                <div class="page-header">
+                    <h1 data-i18n="contacts.title">Contacts</h1>
+                    <div style="display: flex; gap: 10px;">
+                        <button class="btn btn-secondary" onclick="showImportContactsModal()">
+                            <i class="fas fa-file-import"></i> <span data-i18n="contacts.import">Import</span>
+                        </button>
+                        <button class="btn btn-primary" onclick="showAddContactModal()">
+                            <i class="fas fa-plus"></i> <span data-i18n="contacts.add">Add Contact</span>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Groups and Stats -->
+                <div style="display: grid; grid-template-columns: 250px 1fr; gap: 20px; margin-bottom: 20px;">
+                    <!-- Groups Sidebar -->
+                    <div class="card" style="padding: 15px;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px;">
+                            <h3 style="margin: 0;" data-i18n="contacts.groups">Groups</h3>
+                            <button class="btn btn-sm btn-primary" onclick="showAddGroupModal()" style="padding: 5px 10px; font-size: 12px;">
+                                <i class="fas fa-plus"></i>
+                            </button>
+                        </div>
+                        <div id="groupsList" style="max-height: 400px; overflow-y: auto;">
+                            <p data-i18n="common.loading">Loading...</p>
+                        </div>
+                    </div>
+
+                    <!-- Contacts List -->
+                    <div class="card">
+                        <div style="padding: 15px; border-bottom: 1px solid #e0e0e0;">
+                            <div style="display: flex; gap: 15px; align-items: center;">
+                                <div class="form-group" style="flex: 1; margin: 0;">
+                                    <input 
+                                        type="text" 
+                                        id="contactSearch" 
+                                        class="form-control" 
+                                        data-i18n-placeholder="contacts.search_placeholder"
+                                        placeholder="Search contacts..."
+                                        onkeyup="filterContacts()"
+                                    >
+                                </div>
+                                <div id="contactsCount" style="color: #666; font-size: 14px;">0 contacts</div>
+                            </div>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="contacts.name">Name</th>
+                                        <th data-i18n="contacts.phone">Phone</th>
+                                        <th data-i18n="contacts.email">Email</th>
+                                        <th data-i18n="contacts.group">Group</th>
+                                        <th data-i18n="contacts.actions">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="contactsTableBody">
+                                    <tr>
+                                        <td colspan="5" style="text-align: center;" data-i18n="common.loading">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- FAQs Page -->
+            <div id="faqs-page" class="page">
+                <style>
+                    @keyframes fadeIn {
+                        from { opacity: 0; transform: translateY(10px); }
+                        to { opacity: 1; transform: translateY(0); }
+                    }
+                    @keyframes slideIn {
+                        from { transform: translateX(100%); opacity: 0; }
+                        to { transform: translateX(0); opacity: 1; }
+                    }
+                    @keyframes slideOut {
+                        from { transform: translateX(0); opacity: 1; }
+                        to { transform: translateX(100%); opacity: 0; }
+                    }
+                </style>
+                <div class="page-header">
+                    <h1 data-i18n="faqs.title">Manage FAQs</h1>
+                    <button onclick="showAddFaqModal()" class="btn btn-primary">
+                        <span data-i18n="faqs.add">Add FAQ</span>
+                    </button>
+                </div>
+
+                <!-- Welcome Messages Section -->
+                <div class="welcome-messages-section" style="margin-bottom: 30px; background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 data-i18n="faqs.welcome_title" style="margin-bottom: 10px;">Welcome Messages</h3>
+                    <p data-i18n="faqs.welcome_desc" style="color: #666; margin-bottom: 20px;">Configure the messages that will be sent when a customer starts a conversation (only once per day)</p>
+
+                    <div class="welcome-messages-container" style="display: grid; grid-template-columns: 1fr 1fr; gap: 20px;">
+                        <!-- Messages Form -->
+                        <div id="welcomeMessages">
+                            <!-- Messages will be loaded here -->
+                        </div>
+
+                        <!-- Preview Mobile -->
+                        <div>
+                            <h4 data-i18n="faqs.welcome_preview" style="margin-bottom: 10px;">Preview Mobile</h4>
+                            <div id="mobilePreview" style="width: 300px; height: 600px; border: 16px solid black; border-radius: 36px; background: #e5ddd5 url('data:image/svg+xml;base64,PHN2ZyB3aWR0aD0iMTAwJSIgaGVpZ2h0PSIxMDAlIiB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciPjxkZWZzPjxwYXR0ZXJuIGlkPSJwYXR0ZXJuIiB4PSIwIiB5PSIwIiB3aWR0aD0iNDAiIGhlaWdodD0iNDAiIHBhdHRlcm5Vbml0cz0idXNlclNwYWNlT25Vc2UiPjxwYXRoIGQ9Ik0wIDQwTDQwIDBaIiBzdHJva2U9IiNkOWQzY2QiIHN0cm9rZS13aWR0aD0iMSIgZmlsbD0ibm9uZSIvPjwvcGF0dGVybj48L2RlZnM+PHJlY3Qgd2lkdGg9IjEwMCUiIGhlaWdodD0iMTAwJSIgZmlsbD0idXJsKCNwYXR0ZXJuKSIvPjwvc3ZnPg=='); overflow-y: auto; padding: 10px; position: relative;">
+                                <div id="mobileChat" style="display: flex; flex-direction: column; gap: 10px;">
+                                    <div style="text-align: center; color: #666; font-size: 12px; padding: 10px;" data-i18n="faqs.welcome_preview_empty">Messages will appear here as you type</div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <button onclick="saveWelcomeMessages()" class="btn btn-primary" style="margin-top: 15px;" data-i18n="faqs.welcome_save">Save Welcome Messages</button>
+                </div>
+
+                <!-- FAQs List -->
+                <div class="faqs-list-section" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                    <h3 data-i18n="faqs.list_title" style="margin-bottom: 15px;">Frequently Asked Questions</h3>
+                    <div id="faqsList">
+                        <!-- FAQs will be loaded here -->
+                    </div>
+                </div>
+            </div>
+
+            <div id="payments-page" class="page">
+                <!-- Feature Disabled Message (hidden by default) -->
+                <div id="payments-feature-disabled" class="feature-disabled-message" style="display: none;"></div>
+                
+                <!-- Page Content -->
+                <div id="payments-content">
+                <div class="page-header">
+                    <h1 data-i18n="payments.title">Payment Settings</h1>
+                    <p style="color: #666; margin-top: 10px;">Configure your payment gateways. Users will create payment links from their chat panel.</p>
+                </div>
+
+                <!-- Payment Methods Configuration -->
+                <div class="card" style="margin-bottom: 30px;">
+                    <h3 style="margin-bottom: 20px;">Payment Gateways</h3>
+                    <div id="paymentMethodsContainer" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px;">
+                        <div style="text-align: center; padding: 40px; color: #666;">
+                            Loading payment methods...
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Statistics Cards -->
+                <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-top: 30px;">
+                    <div class="stat-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <h3 data-i18n="payments.today" style="font-size: 14px; color: #666; margin-bottom: 10px;">Payments Today</h3>
+                        <div class="stat-number" id="todayPayments" style="font-size: 32px; font-weight: bold; color: #2196F3;">0</div>
+                    </div>
+                    <div class="stat-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <h3 data-i18n="payments.total_amount" style="font-size: 14px; color: #666; margin-bottom: 10px;">Total Amount</h3>
+                        <div class="stat-number" id="totalAmount" style="font-size: 32px; font-weight: bold; color: #4CAF50;">0.00</div>
+                    </div>
+                    <div class="stat-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <h3 data-i18n="payments.pending" style="font-size: 14px; color: #666; margin-bottom: 10px;">Pending</h3>
+                        <div class="stat-number" id="pendingPayments" style="font-size: 32px; font-weight: bold; color: #FF9800;">0</div>
+                    </div>
+                    <div class="stat-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                        <h3 data-i18n="payments.success_rate" style="font-size: 14px; color: #666; margin-bottom: 10px;">Success Rate</h3>
+                        <div class="stat-number" id="successRate" style="font-size: 32px; font-weight: bold; color: #9C27B0;">0%</div>
+                    </div>
+                </div>
+
+                <!-- Recent Payments -->
+                <div class="card" style="margin-top: 30px;">
+                    <h3 style="margin-bottom: 20px;">Recent Payment Links</h3>
+                    
+                    <!-- Filters -->
+                    <div class="filters" style="display: flex; gap: 10px; margin-bottom: 20px; flex-wrap: wrap;">
+                        <select id="paymentStatusFilter" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="" data-i18n="payments.all_status">All statuses</option>
+                            <option value="pending" data-i18n="payments.status_pending">Pending</option>
+                            <option value="paid" data-i18n="payments.status_paid">Paid</option>
+                            <option value="cancelled" data-i18n="payments.status_cancelled">Cancelled</option>
+                            <option value="expired" data-i18n="payments.status_expired">Expired</option>
+                        </select>
+                        <select id="paymentMethodFilter" style="padding: 10px; border: 1px solid #ddd; border-radius: 4px;">
+                            <option value="" data-i18n="payments.all_methods">All methods</option>
+                            <option value="paypal">PayPal</option>
+                            <option value="stripe">Stripe</option>
+                        </select>
+                        <button onclick="filterPayments()" class="btn btn-secondary">
+                            <span data-i18n="btn.filter">Filter</span>
+                        </button>
+                        <button onclick="refreshPayments()" class="btn btn-info">
+                            <span data-i18n="btn.refresh">Refresh</span>
+                        </button>
+                    </div>
+
+                    <!-- Payments Table -->
+                    <div class="table-container">
+                        <table id="paymentsTable">
+                            <thead>
+                                <tr>
+                                    <th data-i18n="payments.id">ID</th>
+                                    <th data-i18n="payments.customer">Customer</th>
+                                    <th data-i18n="payments.amount">Amount</th>
+                                    <th data-i18n="payments.method">Method</th>
+                                    <th data-i18n="payments.status">Status</th>
+                                    <th data-i18n="payments.created_by">Created By</th>
+                                    <th data-i18n="payments.date">Date</th>
+                                    <th data-i18n="payments.actions">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody id="paymentsTableBody">
+                                <!-- Payments will be loaded here -->
+                            </tbody>
+                        </table>
+                    </div>
+
+                    <!-- Pagination -->
+                    <div id="paymentsPagination" style="display: flex; justify-content: center; align-items: center; gap: 10px; margin-top: 20px;">
+                        <!-- Pagination will be rendered here -->
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div id="ai-config-page" class="page">
+                <!-- Feature Disabled Message (hidden by default) -->
+                <div id="ai-feature-disabled" class="feature-disabled-message" style="display: none;"></div>
+                
+                <!-- Page Content -->
+                <div id="ai-config-content">
+                    <div class="page-header">
+                        <h1 data-i18n="ai_config.title">AI Configuration</h1>
+                        <button onclick="showAddAIConfigModal()" class="btn btn-primary">
+                            <span data-i18n="ai_config.add_config">Add Configuration</span>
+                        </button>
+                    </div>
+
+                    <!-- Statistics Cards -->
+                    <div class="stats-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(250px, 1fr)); gap: 20px; margin-bottom: 30px;">
+                        <div class="stat-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 data-i18n="ai_config.today_messages" style="font-size: 14px; color: #666; margin-bottom: 10px;">AI Messages Today</h3>
+                            <div class="stat-number" id="todayAIMessages" style="font-size: 32px; font-weight: bold; color: #2196F3;">0</div>
+                        </div>
+                        <div class="stat-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 data-i18n="ai_config.week_messages" style="font-size: 14px; color: #666; margin-bottom: 10px;">AI Messages This Week</h3>
+                            <div class="stat-number" id="weekAIMessages" style="font-size: 32px; font-weight: bold; color: #4CAF50;">0</div>
+                        </div>
+                        <div class="stat-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 data-i18n="ai_config.avg_response" style="font-size: 14px; color: #666; margin-bottom: 10px;">Avg Response Time</h3>
+                            <div class="stat-number" id="avgResponseTime" style="font-size: 32px; font-weight: bold; color: #FF9800;">0s</div>
+                        </div>
+                        <div class="stat-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                            <h3 data-i18n="ai_config.active_config" style="font-size: 14px; color: #666; margin-bottom: 10px;">Active Configuration</h3>
+                            <div class="stat-number" id="activeConfigName" style="font-size: 18px; font-weight: bold; color: #9C27B0;">None</div>
+                        </div>
+                    </div>
+
+                    <!-- Configurations List -->
+                    <div class="card">
+                        <h3 data-i18n="ai_config.configurations" style="margin-bottom: 20px;">AI Configurations</h3>
+                        <div id="aiConfigsList">
+                            <!-- Configurations will be loaded here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Mass Send Page -->
+            <div id="mass-send-page" class="page">
+                <!-- Feature Disabled Message (hidden by default) -->
+                <div id="mass-send-feature-disabled" class="feature-disabled-message" style="display: none;"></div>
+                
+                <!-- Page Content -->
+                <div id="mass-send-content">
+                    <!-- Tabs -->
+                    <div class="tabs">
+                        <button class="tab-btn active" data-tab="history-tab">
+                            <span data-i18n="mass_send.tab_history">History</span>
+                        </button>
+                        <button class="tab-btn" data-tab="schedules-tab">
+                            <span data-i18n="mass_send.tab_schedules">Schedules</span>
+                        </button>
+                        <button class="tab-btn" data-tab="reminders-tab">
+                            <span data-i18n="mass_send.tab_reminders">Reminders</span>
+                        </button>
+                    </div>
+
+                    <!-- History Tab -->
+                    <div id="history-tab" class="tab-content active">
+                        <div id="massHistoryContainer">
+                            <p data-i18n="common.loading">Loading...</p>
+                        </div>
+                    </div>
+
+                    <!-- Schedules Tab -->
+                    <div id="schedules-tab" class="tab-content" style="display: none">
+                        <div id="massSchedulesContainer">
+                            <p data-i18n="common.loading">Loading...</p>
+                        </div>
+                    </div>
+
+                    <!-- Reminders Tab -->
+                    <div id="reminders-tab" class="tab-content" style="display: none">
+                        <div id="massRemindersContainer">
+                            <p data-i18n="common.loading">Loading...</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="invoices-page" class="page">
+                <!-- Feature Disabled Message (hidden by default) -->
+                <div id="invoices-feature-disabled" class="feature-disabled-message" style="display: none;"></div>
+                
+                <!-- Page Content -->
+                <div id="invoices-content">
+                <div class="page-header">
+                    <h1 data-i18n="menu.invoices">Invoices & Quotes</h1>
+                    <button class="btn btn-primary" onclick="showCreateInvoiceModal()">
+                        <i class="fas fa-plus"></i> <span data-i18n="invoices.create_new">Create New</span>
+                    </button>
+                </div>
+
+                <!-- Filters -->
+                <div class="card" style="margin-bottom: 20px;">
+                    <div class="filters-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 15px;">
+                        <div class="form-group">
+                            <label data-i18n="invoices.filter_type">Type</label>
+                            <select id="invoiceTypeFilter" onchange="loadInvoices()">
+                                <option value="">All</option>
+                                <option value="invoice" data-i18n="invoices.type_invoice">Invoice</option>
+                                <option value="quote" data-i18n="invoices.type_quote">Quote</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="invoices.filter_status">Status</label>
+                            <select id="invoiceStatusFilter" onchange="loadInvoices()">
+                                <option value="">All</option>
+                                <option value="draft" data-i18n="invoices.status_draft">Draft</option>
+                                <option value="sent" data-i18n="invoices.status_sent">Sent</option>
+                                <option value="viewed" data-i18n="invoices.status_viewed">Viewed</option>
+                                <option value="accepted" data-i18n="invoices.status_accepted">Accepted</option>
+                                <option value="rejected" data-i18n="invoices.status_rejected">Rejected</option>
+                                <option value="paid" data-i18n="invoices.status_paid">Paid</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label data-i18n="invoices.search">Search</label>
+                            <input type="text" id="invoiceSearchInput" placeholder="Search..." onkeyup="debounceSearch()">
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Invoices List -->
+                <div class="card">
+                    <div id="invoicesContainer">
+                        <p style="text-align: center; padding: 40px; color: #999;" data-i18n="invoices.loading">Loading invoices...</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Widget Page -->
+            <div id="widget-page" class="page">
+                <!-- Feature Disabled Message (hidden by default) -->
+                <div id="widget-feature-disabled" class="feature-disabled-message" style="display: none;"></div>
+                
+                <!-- Page Content -->
+                <div id="widget-content">
+                <div class="page-header">
+                    <h2 data-i18n="widget.title">WhatsApp Chat Widget</h2>
+                    <p data-i18n="widget.subtitle" style="color: #666; margin-top: 5px;">Embed a customizable WhatsApp chat button on your website</p>
+                </div>
+
+                <!-- Widget List -->
+                <div class="widget-list-container">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+                        <input 
+                            type="text" 
+                            id="widgetSearchInput" 
+                            data-i18n-placeholder="widget.search_placeholder"
+                            placeholder="Search widgets..." 
+                            style="flex: 1; max-width: 300px; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
+                        <button class="btn btn-primary" onclick="showWidgetModal()">
+                            <i class="fas fa-plus"></i> <span data-i18n="widget.create">Create Widget</span>
+                        </button>
+                    </div>
+
+                    <div id="widgetsContainer">
+                        <p data-i18n="widget.loading">Loading widgets...</p>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <div id="api-rest-page" class="page">
+                <div id="api-rest-feature-disabled" class="feature-disabled-message" style="display: none;"></div>
+                <div id="api-rest-content">
+                    <div class="page-header">
+                        <h1 data-i18n="integration.api_rest_title">REST API</h1>
+                        <button class="btn btn-primary" onclick="showCreateApiKeyModal()">
+                            <i class="fas fa-key"></i> <span data-i18n="integration.create_api_key">Create API Key</span>
+                        </button>
+                    </div>
+                    <div class="card" id="apiKeyNotice" style="display: none; margin-bottom: 20px;">
+                        <h3 data-i18n="integration.new_key_title">New API Key</h3>
+                        <p data-i18n="integration.new_key_description">Copy this key now. You will not be able to see it again.</p>
+                        <div style="display: flex; gap: 10px; align-items: center; flex-wrap: wrap;">
+                            <code id="apiKeyValue" style="padding: 10px 12px; background: #f1f5f9; border-radius: 6px; font-size: 13px; flex: 1;"></code>
+                            <button class="btn btn-secondary" onclick="copyApiKey()">
+                                <i class="fas fa-copy"></i> <span data-i18n="integration.copy_key">Copy Key</span>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 data-i18n="integration.api_keys">API Keys</h3>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="integration.key_name">Name</th>
+                                        <th data-i18n="integration.key_prefix">Prefix</th>
+                                        <th data-i18n="integration.key_status">Status</th>
+                                        <th data-i18n="integration.created_at">Created</th>
+                                        <th data-i18n="integration.last_used">Last Used</th>
+                                        <th data-i18n="integration.actions">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="apiKeysTableBody">
+                                    <tr>
+                                        <td colspan="6" style="text-align: center;" data-i18n="common.loading">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="api-documentation-page" class="page">
+                <div id="api-documentation-feature-disabled" class="feature-disabled-message" style="display: none;"></div>
+                <div id="api-documentation-content">
+                    <div class="page-header">
+                        <h1 data-i18n="integration.documentation_title">API Documentation</h1>
+                    </div>
+                    <div class="card" id="api-docs-tabs" style="padding: 20px;">
+                        <div style="display: grid; gap: 16px;">
+                            <div style="display: grid; gap: 8px;">
+                                <strong data-i18n="integration.docs_connection_title">Connection</strong>
+                                <div style="display: grid; gap: 6px; color: #475569;">
+                                    <div><strong data-i18n="integration.docs_base_url_label">Base URL:</strong> <code id="api-docs-base-url">https://example.com</code></div>
+                                    <div><strong data-i18n="integration.docs_auth_label">Authentication:</strong> <code>Authorization: Bearer YOUR_TOKEN</code></div>
+                                    <div><strong data-i18n="integration.docs_tenant_label">Tenant:</strong> <code>X-Tenant-ID: 1</code></div>
+                                </div>
+                            </div>
+                            <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                                <button class="btn btn-sm" data-doc-tab="auth" style="background: var(--primary); color: #fff; border: 1px solid var(--primary);"><span data-i18n="integration.docs_tab_auth">Authentication</span></button>
+                                <button class="btn btn-sm" data-doc-tab="api-keys" style="background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0;"><span data-i18n="integration.docs_tab_api_keys">API Keys</span></button>
+                                <button class="btn btn-sm" data-doc-tab="webhooks" style="background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0;"><span data-i18n="integration.docs_tab_webhooks">Webhooks</span></button>
+                                <button class="btn btn-sm" data-doc-tab="conversations" style="background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0;"><span data-i18n="integration.docs_tab_conversations">Conversations</span></button>
+                                <button class="btn btn-sm" data-doc-tab="contacts" style="background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0;"><span data-i18n="integration.docs_tab_contacts">Contacts</span></button>
+                                <button class="btn btn-sm" data-doc-tab="payments" style="background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0;"><span data-i18n="integration.docs_tab_payments">Payments</span></button>
+                                <button class="btn btn-sm" data-doc-tab="invoices" style="background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0;"><span data-i18n="integration.docs_tab_invoices">Invoices</span></button>
+                                <button class="btn btn-sm" data-doc-tab="whatsapp" style="background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0;"><span data-i18n="integration.docs_tab_whatsapp">WhatsApp</span></button>
+                            </div>
+                            <div data-doc-panel="auth" style="display: block;">
+                                <h3 style="margin-bottom: 10px;" data-i18n="integration.docs_section_auth">Authentication</h3>
+                                <div style="display: grid; gap: 12px;">
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-success">POST</span>
+                                            <code>/api/auth/login</code>
+                                        </div>
+                                        <p style="margin: 6px 0 0; color: #475569;" data-i18n="integration.docs_auth_login_desc">Generates the access token.</p>
+                                        <pre style="margin-top: 8px;"><code>curl -X POST __BASE_URL__/api/auth/login \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@empresa.com","password":"PASSWORD"}'</code></pre>
+                                    </div>
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-success">POST</span>
+                                            <code>/api/auth/forgot-password</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl -X POST __BASE_URL__/api/auth/forgot-password \
+  -H "Content-Type: application/json" \
+  -d '{"email":"admin@empresa.com"}'</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-doc-panel="api-keys" style="display: none;">
+                                <h3 style="margin-bottom: 10px;" data-i18n="integration.docs_section_api_keys">API Keys</h3>
+                                <div style="display: grid; gap: 12px;">
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-info">GET</span>
+                                            <code>/api/tenant/api-keys</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl __BASE_URL__/api/tenant/api-keys \
+  -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
+                                    </div>
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-success">POST</span>
+                                            <code>/api/tenant/api-keys</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl -X POST __BASE_URL__/api/tenant/api-keys \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Minha integração"}'</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-doc-panel="webhooks" style="display: none;">
+                                <h3 style="margin-bottom: 10px;" data-i18n="integration.docs_section_webhooks">Webhooks</h3>
+                                <div style="display: grid; gap: 12px;">
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-info">GET</span>
+                                            <code>/api/tenant/webhooks</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl __BASE_URL__/api/tenant/webhooks \
+  -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
+                                    </div>
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-success">POST</span>
+                                            <code>/api/tenant/webhooks</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl -X POST __BASE_URL__/api/tenant/webhooks \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"event_type":"message.received","webhook_url":"https://your.site/webhook","secret_key":"SECRET"}'</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-doc-panel="conversations" style="display: none;">
+                                <h3 style="margin-bottom: 10px;" data-i18n="integration.docs_section_conversations">Conversations</h3>
+                                <div style="display: grid; gap: 12px;">
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-info">GET</span>
+                                            <code>/api/tenant/conversations</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl "__BASE_URL__/api/tenant/conversations?status=waiting" \
+  -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
+                                    </div>
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-info">GET</span>
+                                            <code>/api/tenant/conversations/stats</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl __BASE_URL__/api/tenant/conversations/stats \
+  -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-doc-panel="contacts" style="display: none;">
+                                <h3 style="margin-bottom: 10px;" data-i18n="integration.docs_section_contacts">Contacts</h3>
+                                <div style="display: grid; gap: 12px;">
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-info">GET</span>
+                                            <code>/api/contacts/contacts</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl "__BASE_URL__/api/contacts/contacts?limit=50" \
+  -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
+                                    </div>
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-success">POST</span>
+                                            <code>/api/contacts/contacts</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl -X POST __BASE_URL__/api/contacts/contacts \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Maria","phone":"5511999999999","email":"maria@empresa.com"}'</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-doc-panel="payments" style="display: none;">
+                                <h3 style="margin-bottom: 10px;" data-i18n="integration.docs_section_payments">Payments</h3>
+                                <div style="display: grid; gap: 12px;">
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-info">GET</span>
+                                            <code>/api/payments/methods</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl __BASE_URL__/api/payments/methods \
+  -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
+                                    </div>
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-success">POST</span>
+                                            <code>/api/payments/link</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl -X POST __BASE_URL__/api/payments/link \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"amount":150,"customer_name":"João","customer_phone":"5511999999999","payment_method":"stripe"}'</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-doc-panel="invoices" style="display: none;">
+                                <h3 style="margin-bottom: 10px;" data-i18n="integration.docs_section_invoices">Invoices & Quotes</h3>
+                                <div style="display: grid; gap: 12px;">
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-info">GET</span>
+                                            <code>/api/invoices</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl __BASE_URL__/api/invoices \
+  -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
+                                    </div>
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-success">POST</span>
+                                            <code>/api/invoices</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl -X POST __BASE_URL__/api/invoices \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Content-Type: application/json" \
+  -d '{"type":"invoice","customer_name":"Empresa X","amount":350.75}'</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                            <div data-doc-panel="whatsapp" style="display: none;">
+                                <h3 style="margin-bottom: 10px;" data-i18n="integration.docs_section_whatsapp">WhatsApp</h3>
+                                <div style="display: grid; gap: 12px;">
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-info">GET</span>
+                                            <code>/api/tenant/whatsapp/status</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl __BASE_URL__/api/tenant/whatsapp/status \
+  -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
+                                    </div>
+                                    <div>
+                                        <div style="display: flex; gap: 8px; align-items: center;">
+                                            <span class="badge badge-success">POST</span>
+                                            <code>/api/tenant/whatsapp/connect</code>
+                                        </div>
+                                        <pre style="margin-top: 8px;"><code>curl -X POST __BASE_URL__/api/tenant/whatsapp/connect \
+  -H "Authorization: Bearer YOUR_TOKEN"</code></pre>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div id="webhook-page" class="page">
+                <div id="webhook-feature-disabled" class="feature-disabled-message" style="display: none;"></div>
+                <div id="webhook-content">
+                    <div class="page-header">
+                        <h1 data-i18n="integration.webhook_title">Webhooks</h1>
+                        <button class="btn btn-primary" onclick="showCreateWebhookModal()">
+                            <i class="fas fa-plus"></i> <span data-i18n="integration.create_webhook">Create Webhook</span>
+                        </button>
+                    </div>
+                    <div class="card">
+                        <div class="card-header">
+                            <h3 data-i18n="integration.webhook_subtitle">Event Subscriptions</h3>
+                        </div>
+                        <div class="table-container">
+                            <table>
+                                <thead>
+                                    <tr>
+                                        <th data-i18n="integration.webhook_event">Event</th>
+                                        <th data-i18n="integration.webhook_url">URL</th>
+                                        <th data-i18n="integration.webhook_status">Status</th>
+                                        <th data-i18n="integration.created_at">Created</th>
+                                        <th data-i18n="integration.actions">Actions</th>
+                                    </tr>
+                                </thead>
+                                <tbody id="webhooksTableBody">
+                                    <tr>
+                                        <td colspan="5" style="text-align: center;" data-i18n="common.loading">Loading...</td>
+                                    </tr>
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                    <div class="card">
+                        <h3 data-i18n="integration.available_events">Available Events</h3>
+                        <ul style="margin-top: 10px; padding-left: 20px; color: #475569;">
+                            <li>conversation.created</li>
+                            <li>conversation.closed</li>
+                            <li>message.received</li>
+                            <li>message.sent</li>
+                            <li>payment.received</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- WooCommerce Settings Page -->
+            <div id="woocommerce-settings-page" class="page">
+                <!-- Feature Disabled Message (hidden by default) -->
+                <div id="woocommerce-feature-disabled" class="feature-disabled-message" style="display: none;"></div>
+                
+                <!-- Page Content -->
+                <div id="woocommerce-settings-content">
+                <div class="page-header">
+                    <h1 data-i18n="woocommerce.settings_title">WooCommerce Settings</h1>
+                </div>
+
+                <div class="woocommerce-settings-container">
+                    <div class="card">
+                        <p data-i18n="woocommerce.instructions" style="color: #666; margin-bottom: 20px;">
+                            Enter your WooCommerce REST API credentials below. You can generate these in your WordPress admin under WooCommerce > Settings > Advanced > REST API.
+                        </p>
+                        
+                        <div style="background: #fef3c7; border-left: 4px solid #f59e0b; padding: 12px; margin-bottom: 20px; border-radius: 4px;">
+                            <strong style="color: #92400e;">⚠️ Important:</strong>
+                            <p style="margin: 8px 0 0 0; color: #78350f; font-size: 14px;">
+                                Click "Test Connection" first to verify your settings before saving. The system will automatically test the connection when you save.
+                            </p>
+                        </div>
+
+                        <form id="woocommerceSettingsForm" onsubmit="saveWooCommerceSettings(event)">
+                            <div class="form-group">
+                                <label data-i18n="woocommerce.store_url">Store URL</label>
+                                <input 
+                                    type="text" 
+                                    id="wcStoreUrl" 
+                                    data-i18n-placeholder="woocommerce.store_url_placeholder"
+                                    placeholder="https://yourstore.com"
+                                    autocomplete="off"
+                                    spellcheck="false"
+                                    required
+                                />
+                                <small style="color: #666; font-size: 12px; display: block; margin-top: 4px;">
+                                    <strong>Example:</strong> https://yourstore.com<br>
+                                    <strong>⚠️ Important:</strong> No trailing slash, no spaces, no special characters like & < > " '
+                                </small>
+                            </div>
+
+                            <div class="form-group">
+                                <label data-i18n="woocommerce.consumer_key">Consumer Key</label>
+                                <input 
+                                    type="text" 
+                                    id="wcConsumerKey" 
+                                    data-i18n-placeholder="woocommerce.consumer_key_placeholder"
+                                    placeholder="ck_xxxxxxxxxxxxx"
+                                    required
+                                />
+                            </div>
+
+                            <div class="form-group">
+                                <label data-i18n="woocommerce.consumer_secret">Consumer Secret</label>
+                                <input 
+                                    type="password" 
+                                    id="wcConsumerSecret" 
+                                    data-i18n-placeholder="woocommerce.consumer_secret_placeholder"
+                                    placeholder="cs_xxxxxxxxxxxxx"
+                                    autocomplete="off"
+                                    required
+                                />
+                            </div>
+
+                            <div class="form-actions">
+                                <button type="button" class="btn btn-secondary" onclick="testWooCommerceConnection()">
+                                    <span data-i18n="woocommerce.test_connection">Test Connection</span>
+                                </button>
+                                <button type="submit" class="btn btn-primary">
+                                    <span data-i18n="woocommerce.save_settings">Save Settings</span>
+                                </button>
+                            </div>
+                        </form>
+
+                        <div id="wcConnectionStatus" style="margin-top: 20px;"></div>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- WooCommerce Products Page -->
+            <div id="woocommerce-products-page" class="page">
+                <!-- Feature Disabled Message (hidden by default) -->
+                <div id="woocommerce-products-feature-disabled" class="feature-disabled-message" style="display: none;"></div>
+                
+                <!-- Page Content -->
+                <div id="woocommerce-products-content">
+                <div class="page-header">
+                    <h1 data-i18n="woocommerce.products_title">WooCommerce Products</h1>
+                    <button class="btn btn-primary" onclick="syncWooCommerceProducts()">
+                        <span data-i18n="woocommerce.sync_products">🔄 Sync Products</span>
+                    </button>
+                </div>
+
+                <div id="wcProductsContainer">
+                    <div id="wcProductsLoading" style="text-align: center; padding: 40px; display: none;">
+                        <div class="spinner"></div>
+                        <p data-i18n="woocommerce.syncing">Syncing products...</p>
+                    </div>
+
+                    <div id="wcProductsList" class="wc-products-grid">
+                        <!-- Products will be loaded here -->
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- WooCommerce Notifications Page -->
+            <div id="woocommerce-notifications-page" class="page">
+                <!-- Feature Disabled Message (hidden by default) -->
+                <div id="woocommerce-notifications-feature-disabled" class="feature-disabled-message" style="display: none;"></div>
+                
+                <!-- Page Content -->
+                <div id="woocommerce-notifications-content">
+                <div class="page-header">
+                    <h1 data-i18n="woocommerce.notifications_title">🔔 WooCommerce Notifications</h1>
+                </div>
+
+                <div class="woocommerce-notifications-container">
+                    <!-- Info Alert -->
+                    <div class="card" style="background: #e3f2fd; border-left: 4px solid #2196f3;">
+                        <h3 style="color: #1976d2; margin-bottom: 10px;">📱 Customer Notifications</h3>
+                        <p style="color: #555; margin: 0;">
+                            <strong>Important:</strong> These notifications are sent automatically to YOUR CUSTOMERS via WhatsApp when they interact with your store (place orders, register, etc.). Configure the messages your customers will receive below.
+                        </p>
+                    </div>
+
+                    <!-- Webhook Configuration Card -->
+                    <div class="card">
+                        <h3 data-i18n="woocommerce.webhook_config">Webhook Configuration</h3>
+                        <p data-i18n="woocommerce.webhook_instructions" style="color: #666; margin-bottom: 20px;">
+                            Configure webhooks in your WooCommerce store to send automatic WhatsApp notifications to your customers.
+                        </p>
+
+                        <div class="form-group">
+                            <label data-i18n="woocommerce.webhook_url">Webhook URL</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input 
+                                    type="text" 
+                                    id="webhookUrl" 
+                                    readonly 
+                                    style="flex: 1; background: #f5f5f5;"
+                                />
+                                <button class="btn btn-secondary" onclick="copyWebhookUrl()">
+                                    <span data-i18n="woocommerce.copy">📋 Copy</span>
+                                </button>
+                            </div>
+                            <small style="color: #666; display: block; margin-top: 5px;">
+                                <span data-i18n="woocommerce.webhook_url_help">Add this URL to your WooCommerce webhooks</span>
+                            </small>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-i18n="woocommerce.webhook_secret">Webhook Secret</label>
+                            <div style="display: flex; gap: 10px;">
+                                <input 
+                                    type="text" 
+                                    id="webhookSecret" 
+                                    data-i18n-placeholder="woocommerce.webhook_secret_placeholder"
+                                    placeholder="Leave empty or generate a secret"
+                                />
+                                <button class="btn btn-secondary" onclick="generateWebhookSecret()">
+                                    <span data-i18n="woocommerce.generate">🔑 Generate</span>
+                                </button>
+                            </div>
+                            <small style="color: #666; display: block; margin-top: 5px;">
+                                <span data-i18n="woocommerce.webhook_secret_help">Optional: Use for webhook signature verification</span>
+                            </small>
+                        </div>
+                    </div>
+
+                    <!-- New Order Notifications -->
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+                            <div>
+                                <h3>🛒 <span data-i18n="woocommerce.new_order">New Order</span></h3>
+                                <p data-i18n="woocommerce.new_order_desc" style="color: #666; margin: 5px 0 0 0;">
+                                    Send confirmation to customer when order is created
+                                </p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="newOrderEnabled">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-i18n="woocommerce.message_template">Message Template</label>
+                            <textarea 
+                                id="newOrderTemplate" 
+                                rows="8"
+                                placeholder="Enter your message template..."
+                            ></textarea>
+                            <div style="margin-top: 10px;">
+                                <small style="color: #666; display: block; margin-bottom: 8px;">
+                                    <strong data-i18n="woocommerce.available_placeholders">Available Placeholders:</strong>
+                                </small>
+                                <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('newOrderTemplate', '{{order_number}}')">{{order_number}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('newOrderTemplate', '{{customer_name}}')">{{customer_name}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('newOrderTemplate', '{{total}}')">{{total}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('newOrderTemplate', '{{currency}}')">{{currency}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('newOrderTemplate', '{{payment_method}}')">{{payment_method}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('newOrderTemplate', '{{items_count}}')">{{items_count}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('newOrderTemplate', '{{order_status}}')">{{order_status}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('newOrderTemplate', '{{order_date}}')">{{order_date}}</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" style="margin-top: 10px;" onclick="testNotification('new_order')">
+                                <span data-i18n="woocommerce.test_notification">🧪 Test Notification</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Customer Registration Notifications -->
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+                            <div>
+                                <h3>👤 <span data-i18n="woocommerce.customer_registration">Customer Registration</span></h3>
+                                <p data-i18n="woocommerce.customer_registration_desc" style="color: #666; margin: 5px 0 0 0;">
+                                    Send welcome message to new customers
+                                </p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="customerRegistrationEnabled">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-i18n="woocommerce.message_template">Message Template</label>
+                            <textarea 
+                                id="customerRegistrationTemplate" 
+                                rows="6"
+                                placeholder="Enter your message template..."
+                            ></textarea>
+                            <div style="margin-top: 10px;">
+                                <small style="color: #666; display: block; margin-bottom: 8px;">
+                                    <strong data-i18n="woocommerce.available_placeholders">Available Placeholders:</strong>
+                                </small>
+                                <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('customerRegistrationTemplate', '{{customer_name}}')">{{customer_name}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('customerRegistrationTemplate', '{{customer_email}}')">{{customer_email}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('customerRegistrationTemplate', '{{customer_username}}')">{{customer_username}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('customerRegistrationTemplate', '{{registration_date}}')">{{registration_date}}</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" style="margin-top: 10px;" onclick="testNotification('customer_registration')">
+                                <span data-i18n="woocommerce.test_notification">🧪 Test Notification</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Password Reset Notifications -->
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+                            <div>
+                                <h3>🔐 <span data-i18n="woocommerce.password_reset">Password Reset</span></h3>
+                                <p data-i18n="woocommerce.password_reset_desc" style="color: #666; margin: 5px 0 0 0;">
+                                    Send reset link to customers
+                                </p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="passwordResetEnabled">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-i18n="woocommerce.message_template">Message Template</label>
+                            <textarea 
+                                id="passwordResetTemplate" 
+                                rows="5"
+                                placeholder="Enter your message template..."
+                            ></textarea>
+                            <div style="margin-top: 10px;">
+                                <small style="color: #666; display: block; margin-bottom: 8px;">
+                                    <strong data-i18n="woocommerce.available_placeholders">Available Placeholders:</strong>
+                                </small>
+                                <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('passwordResetTemplate', '{{customer_email}}')">{{customer_email}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('passwordResetTemplate', '{{reset_link}}')">{{reset_link}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('passwordResetTemplate', '{{request_time}}')">{{request_time}}</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" style="margin-top: 10px;" onclick="testNotification('password_reset')">
+                                <span data-i18n="woocommerce.test_notification">🧪 Test Notification</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Product Comment Notifications -->
+                    <div class="card">
+                        <div style="display: flex; justify-content: space-between; align-items: start; margin-bottom: 20px;">
+                            <div>
+                                <h3>💬 <span data-i18n="woocommerce.product_comment">Product Comment</span></h3>
+                                <p data-i18n="woocommerce.product_comment_desc" style="color: #666; margin: 5px 0 0 0;">
+                                    Send confirmation when customer leaves a review
+                                </p>
+                            </div>
+                            <label class="toggle-switch">
+                                <input type="checkbox" id="productCommentEnabled">
+                                <span class="toggle-slider"></span>
+                            </label>
+                        </div>
+
+                        <div class="form-group">
+                            <label data-i18n="woocommerce.message_template">Message Template</label>
+                            <textarea 
+                                id="productCommentTemplate" 
+                                rows="7"
+                                placeholder="Enter your message template..."
+                            ></textarea>
+                            <div style="margin-top: 10px;">
+                                <small style="color: #666; display: block; margin-bottom: 8px;">
+                                    <strong data-i18n="woocommerce.available_placeholders">Available Placeholders:</strong>
+                                </small>
+                                <div style="display: flex; flex-wrap: wrap; gap: 5px;">
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('productCommentTemplate', '{{product_name}}')">{{product_name}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('productCommentTemplate', '{{customer_name}}')">{{customer_name}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('productCommentTemplate', '{{comment_text}}')">{{comment_text}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('productCommentTemplate', '{{rating}}')">{{rating}}</span>
+                                    <span class="placeholder-tag" onclick="insertPlaceholder('productCommentTemplate', '{{comment_date}}')">{{comment_date}}</span>
+                                </div>
+                            </div>
+                            <button class="btn btn-secondary" style="margin-top: 10px;" onclick="testNotification('product_comment')">
+                                <span data-i18n="woocommerce.test_notification">🧪 Test Notification</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <!-- Save Button -->
+                    <div style="text-align: center; margin-top: 30px;">
+                        <button class="btn btn-primary" style="padding: 12px 40px; font-size: 16px;" onclick="saveNotificationSettings()">
+                            <span data-i18n="woocommerce.save_notification_settings">💾 Save Notification Settings</span>
+                        </button>
+                    </div>
+                </div>
+                </div>
+            </div>
+
+            <!-- Profile Page -->
+            <div id="profile-page" class="page">
+                <!-- Content will be dynamically loaded by profile.js -->
+            </div>
+
+            <!-- Bio Link Page -->
+            <div id="biolink-page" class="page">
+                <!-- Feature Disabled Message (hidden by default) -->
+                <div id="biolink-feature-disabled" class="feature-disabled-message" style="display: none;"></div>
+                <!-- Content will be dynamically loaded by biolink.js -->
+            </div>
+        </div>
+    </div>
+
+    <!-- Widget Modal -->
+    <div id="widgetModal" class="modal" style="display: none;">
+        <div class="modal-content widget-modal-content" style="max-width: 1000px; max-height: 90vh; overflow-y: auto;">
+            <div class="modal-header">
+                <h3 id="widgetModalTitle" data-i18n="widget.create">Create Widget</h3>
+                <span class="close" onclick="closeWidgetModal()">&times;</span>
+            </div>
+            <div class="modal-body" style="display: grid; grid-template-columns: 1fr 350px; gap: 30px;">
+                <!-- Left Side: Form -->
+                <div class="widget-form-section">
+                    <form id="widgetForm">
+                        <input type="hidden" id="widgetId" name="id">
+                        
+                        <!-- Basic Info -->
+                        <div class="form-section">
+                            <h4 data-i18n="widget.basic_info">Basic Information</h4>
+                            
+                            <div class="form-group">
+                                <label for="widgetName" data-i18n="widget.name">Widget Name</label>
+                                <input 
+                                    type="text" 
+                                    id="widgetName" 
+                                    name="name" 
+                                    data-i18n-placeholder="widget.name_placeholder"
+                                    placeholder="e.g., Main Website Widget" 
+                                    required>
+                                <small data-i18n="widget.name_help">Internal name for identification</small>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="widgetWhatsappNumber" data-i18n="widget.whatsapp_number">WhatsApp Number</label>
+                                <input 
+                                    type="tel" 
+                                    id="widgetWhatsappNumber" 
+                                    name="whatsapp_number" 
+                                    data-i18n-placeholder="widget.whatsapp_placeholder"
+                                    required>
+                                <small data-i18n="widget.whatsapp_help">Include country code (e.g., +1 for US)</small>
+                            </div>
+                        </div>
+
+                        <!-- Appearance -->
+                        <div class="form-section">
+                            <h4 data-i18n="widget.appearance">Appearance</h4>
+                            
+                            <div class="form-group">
+                                <label for="widgetButtonTitle" data-i18n="widget.button_title">Button Title</label>
+                                <input 
+                                    type="text" 
+                                    id="widgetButtonTitle" 
+                                    name="button_title" 
+                                    data-i18n-placeholder="widget.button_title_placeholder"
+                                    placeholder="Chat with us" 
+                                    required
+                                    oninput="updateWidgetPreview()">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="widgetButtonColor" data-i18n="widget.button_color">Button Color</label>
+                                <div style="display: flex; gap: 10px; align-items: center;">
+                                    <input 
+                                        type="color" 
+                                        id="widgetButtonColor" 
+                                        name="button_background_color" 
+                                        value="#25D366"
+                                        oninput="updateWidgetPreview()"
+                                        style="width: 60px; height: 40px; border: 1px solid #ddd; border-radius: 4px; cursor: pointer;">
+                                    <input 
+                                        type="text" 
+                                        id="widgetButtonColorHex" 
+                                        value="#25D366"
+                                        oninput="syncColorInput()"
+                                        pattern="^#[0-9A-Fa-f]{6}$"
+                                        placeholder="#25D366"
+                                        style="flex: 1; padding: 8px 12px; border: 1px solid #ddd; border-radius: 4px;">
+                                </div>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="widgetTitle" data-i18n="widget.widget_title">Widget Title</label>
+                                <input 
+                                    type="text" 
+                                    id="widgetTitle" 
+                                    name="widget_title" 
+                                    data-i18n-placeholder="widget.widget_title_placeholder"
+                                    placeholder="How can we help you?" 
+                                    required>
+                            </div>
+
+                            <div class="form-group">
+                                <label for="widgetPredefinedMessage" data-i18n="widget.predefined_message">Predefined Message (Optional)</label>
+                                <textarea 
+                                    id="widgetPredefinedMessage" 
+                                    name="predefined_message" 
+                                    rows="3"
+                                    data-i18n-placeholder="widget.predefined_message_placeholder"
+                                    placeholder="Hello! I'm interested in..."></textarea>
+                                <small data-i18n="widget.predefined_message_help">This message will be pre-filled when users click the button</small>
+                            </div>
+                        </div>
+
+                        <!-- Position & Size -->
+                        <div class="form-section">
+                            <h4 data-i18n="widget.position_size">Position & Size</h4>
+                            
+                            <div class="form-group">
+                                <label for="widgetMarginRight" data-i18n="widget.margin_right">Margin Right (px)</label>
+                                <input 
+                                    type="number" 
+                                    id="widgetMarginRight" 
+                                    name="margin_right" 
+                                    value="20" 
+                                    min="0" 
+                                    max="500"
+                                    oninput="updateWidgetPreview()">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="widgetMarginBottom" data-i18n="widget.margin_bottom">Margin Bottom (px)</label>
+                                <input 
+                                    type="number" 
+                                    id="widgetMarginBottom" 
+                                    name="margin_bottom" 
+                                    value="20" 
+                                    min="0" 
+                                    max="500"
+                                    oninput="updateWidgetPreview()">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="widgetBorderRadius" data-i18n="widget.border_radius">Border Radius (px)</label>
+                                <input 
+                                    type="number" 
+                                    id="widgetBorderRadius" 
+                                    name="border_radius" 
+                                    value="50" 
+                                    min="0" 
+                                    max="100"
+                                    oninput="updateWidgetPreview()">
+                            </div>
+
+                            <div class="form-group">
+                                <label for="widgetMaxLength" data-i18n="widget.max_message_length">Max Message Length</label>
+                                <input 
+                                    type="number" 
+                                    id="widgetMaxLength" 
+                                    name="max_message_length" 
+                                    value="500" 
+                                    min="50" 
+                                    max="5000">
+                            </div>
+                        </div>
+
+                        <!-- Status -->
+                        <div class="form-section">
+                            <div class="form-group">
+                                <label>
+                                    <input type="checkbox" id="widgetIsActive" name="is_active" checked>
+                                    <span data-i18n="widget.is_active">Active</span>
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-actions">
+                            <button type="button" class="btn btn-secondary" onclick="closeWidgetModal()">
+                                <span data-i18n="common.cancel">Cancel</span>
+                            </button>
+                            <button type="button" class="btn btn-primary" onclick="saveWidget()">
+                                <span data-i18n="common.save">Save</span>
+                            </button>
+                        </div>
+                    </form>
+                </div>
+
+                <!-- Right Side: Preview -->
+                <div class="widget-preview-section" style="position: sticky; top: 20px;">
+                    <h4 data-i18n="widget.preview">Preview</h4>
+                    <div style="background: #f0f0f0; border-radius: 8px; padding: 20px; min-height: 400px; position: relative;">
+                        <div 
+                            id="widgetButtonPreview" 
+                            style="position: absolute; right: 20px; bottom: 20px; display: flex; align-items: center; gap: 8px; padding: 12px 20px; background: #25D366; color: white; border-radius: 50px; font-size: 14px; box-shadow: 0 4px 12px rgba(0,0,0,0.15); cursor: pointer; transition: transform 0.2s;">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="white">
+                                <path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347m-5.421 7.403h-.004a9.87 9.87 0 01-5.031-1.378l-.361-.214-3.741.982.998-3.648-.235-.374a9.86 9.86 0 01-1.51-5.26c.001-5.45 4.436-9.884 9.888-9.884 2.64 0 5.122 1.03 6.988 2.898a9.825 9.825 0 012.893 6.994c-.003 5.45-4.437 9.884-9.885 9.884m8.413-18.297A11.815 11.815 0 0012.05 0C5.495 0 .16 5.335.157 11.892c0 2.096.547 4.142 1.588 5.945L.057 24l6.305-1.654a11.882 11.882 0 005.683 1.448h.005c6.554 0 11.89-5.335 11.893-11.893a11.821 11.821 0 00-3.48-8.413Z"/>
+                            </svg>
+                            <span id="previewButtonTitle">Chat with us</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Embed Code Modal -->
+    <div id="embedCodeModal" class="modal" style="display: none;">
+        <div class="modal-content" style="max-width: 700px;">
+            <div class="modal-header">
+                <h3 data-i18n="widget.embed_code">Embed Code</h3>
+                <span class="close" onclick="closeEmbedCodeModal()">&times;</span>
+            </div>
+            <div class="modal-body">
+                <p data-i18n="widget.embed_instructions">Copy and paste this code before the closing &lt;/body&gt; tag on your website:</p>
+                <pre style="background: #f5f5f5; padding: 15px; border-radius: 4px; overflow-x: auto; margin: 15px 0;"><code id="embedCodeContent"></code></pre>
+                <button class="btn btn-primary" onclick="copyEmbedCode()" style="width: 100%;">
+                    <i class="fas fa-copy"></i> <span data-i18n="widget.copy_code">Copy Code</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Scripts -->
+    <script src="js/i18n.js?v=3"></script>
+    <script src="js/rtl.js?v=2"></script>
+    <script src="js/modals.js?v=2"></script>
+    <script src="js/notifications.js"></script>
+    <script src="js/feature-check.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/dashboard.js"></script>
+    <script src="js/stores.js"></script>
+    <script src="js/departments.js"></script>
+    <script src="js/users.js"></script>
+    <script src="js/whatsapp.js"></script>
+    <script src="js/whatsapp-cloud.js"></script>
+    <script src="js/conversations-tenant-ui.js"></script>
+    <script src="js/faq.js"></script>
+    <script src="js/payments.js"></script>
+    <script src="js/ai-config.js"></script>
+    <script src="js/woocommerce.js"></script>
+    <script src="js/mass-send.js"></script>
+    <script>
+      window.UserConversationsConfig = {
+        webSource: 'legacy',
+        adminMode: true,
+        readOnly: true,
+        allowPipelineEdit: true
+      };
+    </script>
+    <script src="/user/js/conversations-user.js"></script>
+    <script src="js/conversations.js"></script>
+    <script src="js/contacts.js"></script>
+    <script src="js/invoices.js"></script>
+    <script src="js/widget.js"></script>
+    <script src="js/integrations.js"></script>
+    <script src="js/profile.js"></script>
+    <script src="js/plan-management.js"></script>
+    <script src="js/biolink.js"></script>
+    <script src="js/app.js"></script>
+    <script src="js/main.js"></script>
+    <script>
+        // Global function to toggle RTL/LTR
+        function toggleRTL() {
+            if (!window.RTL) {
+                console.error('RTL module not loaded');
+                return;
+            }
+
+            // Toggle direction
+            window.RTL.toggleDirection();
+            
+            // Update button state
+            const btn = document.getElementById('rtlToggleBtn');
+            const currentDir = window.RTL.getCurrentDirection();
+            if (btn) {
+                btn.classList.toggle('active', currentDir === 'rtl');
+            }
+
+            // Show notification
+            const directionText = currentDir === 'rtl' ? 'RTL' : 'LTR';
+            if (window.showNotification) {
+                showNotification(`Direction changed to ${directionText}`, 'success');
+            }
+        }
+
+        // Update button state on load
+        document.addEventListener('DOMContentLoaded', function() {
+            const btn = document.getElementById('rtlToggleBtn');
+            if (btn && window.RTL) {
+                const currentDir = window.RTL.getCurrentDirection();
+                btn.classList.toggle('active', currentDir === 'rtl');
+            }
+        });
+    </script>
+</body>
+</html>

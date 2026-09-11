@@ -1,0 +1,812 @@
+/**
+ * Subscription Plans Management Module
+ */
+
+async function loadPlans() {
+    const content = document.getElementById('content');
+    showLoading(content);
+
+    try {
+        const response = await apiRequest('/superadmin/plans');
+        const plans = response.data || [];
+
+        content.innerHTML = `
+            <div class="card-header" style="background: white; padding: 1.5rem; border-radius: 12px; margin-bottom: 1.5rem;">
+                <div style="display: flex; justify-content: space-between; align-items: center;">
+                    <h1 style="margin: 0; color: var(--dark);">Subscription Plans</h1>
+                    <button class="btn btn-primary" onclick="showCreatePlanModal()">
+                        <i class="fas fa-plus"></i> Create Plan
+                    </button>
+                </div>
+            </div>
+
+            <div class="stats-grid">
+                ${plans.map(plan => `
+                    <div class="card">
+                        <div style="text-align: center; padding: 1rem;">
+                            <h3 style="color: var(--primary); margin-bottom: 0.5rem;">${plan.name}</h3>
+                            <div style="font-size: 2rem; font-weight: 700; color: var(--dark); margin: 1rem 0;">
+                                ${formatCurrency(plan.price, plan.currency)}
+                                <span style="font-size: 1rem; color: var(--text-light);">/${plan.billing_period === 'monthly' ? 'month' : 'year'}</span>
+                            </div>
+                            <p style="color: var(--text-light); margin-bottom: 1rem;">${plan.description || ''}</p>
+                            
+                            <div style="text-align: left; margin: 1.5rem 0; padding: 1rem; background: var(--light); border-radius: 8px;">
+                                <div style="margin-bottom: 0.5rem;">
+                                    <i class="fas fa-store" style="color: var(--primary); width: 20px;"></i>
+                                    <strong>${plan.max_stores}</strong> store(s)
+                                </div>
+                                <div style="margin-bottom: 0.5rem;">
+                                    <i class="fas fa-users" style="color: var(--primary); width: 20px;"></i>
+                                    <strong>${plan.max_users}</strong> users
+                                </div>
+                                <div style="margin-bottom: 0.5rem;">
+                                    <i class="fas fa-building" style="color: var(--primary); width: 20px;"></i>
+                                    <strong>${plan.max_departments}</strong> departments
+                                </div>
+                                <div style="margin-bottom: 0.5rem;">
+                                    <i class="fas fa-comments" style="color: var(--primary); width: 20px;"></i>
+                                    <strong>${plan.max_conversations}</strong> conversations
+                                </div>
+                                <div style="margin-bottom: 0.5rem;">
+                                    <i class="fas fa-envelope" style="color: var(--primary); width: 20px;"></i>
+                                    <strong>${plan.max_messages_per_month}</strong> messages/month
+                                </div>
+                                <div>
+                                    <i class="fas fa-question-circle" style="color: var(--primary); width: 20px;"></i>
+                                    <strong>${plan.max_faqs || 0}</strong> FAQs
+                                </div>
+                            </div>
+
+                            <div style="text-align: left; margin: 1rem 0; padding: 1rem; background: #f8f9fa; border-radius: 8px; font-size: 0.9rem;">
+                                <div style="margin-bottom: 0.3rem;">
+                                    <i class="fas ${plan.ai_enabled ? 'fa-check text-success' : 'fa-times text-danger'}" style="width: 20px;"></i>
+                                    AI ${plan.ai_enabled ? 'Enabled' : 'Disabled'}
+                                </div>
+                                <div style="margin-bottom: 0.3rem;">
+                                    <i class="fas ${plan.woocommerce_enabled ? 'fa-check text-success' : 'fa-times text-danger'}" style="width: 20px;"></i>
+                                    WooCommerce ${plan.woocommerce_enabled ? 'Enabled' : 'Disabled'}
+                                </div>
+                                ${plan.invoices_enabled ? `
+                                <div style="margin-bottom: 0.3rem;">
+                                    <i class="fas fa-file-invoice text-success" style="width: 20px;"></i>
+                                    ${plan.max_invoices_per_month} invoices/month
+                                </div>
+                                ` : ''}
+                                ${plan.quotes_enabled ? `
+                                <div style="margin-bottom: 0.3rem;">
+                                    <i class="fas fa-file-alt text-success" style="width: 20px;"></i>
+                                    ${plan.max_quotes_per_month} quotes/month
+                                </div>
+                                ` : ''}
+                                ${plan.widgets_enabled ? `
+                                <div style="margin-bottom: 0.3rem;">
+                                    <i class="fas fa-puzzle-piece text-success" style="width: 20px;"></i>
+                                    ${plan.max_widgets} widgets
+                                </div>
+                                ` : ''}
+                                ${plan.payment_links_enabled ? `
+                                <div style="margin-bottom: 0.3rem;">
+                                    <i class="fas fa-link text-success" style="width: 20px;"></i>
+                                    ${plan.max_payment_links_per_month} links/month
+                                </div>
+                                ` : ''}
+                            </div>
+
+                            <div style="margin-top: 1rem;">
+                                <span class="badge ${plan.active ? 'badge-success' : 'badge-danger'}">
+                                    ${plan.active ? 'Active' : 'Inactive'}
+                                </span>
+                                <span class="badge badge-info">${plan.tenant_count || 0} tenants</span>
+                            </div>
+
+                            <div style="margin-top: 1.5rem; display: flex; gap: 0.5rem; justify-content: center;">
+                                <button class="btn btn-primary" onclick="editPlan(${plan.id})" style="flex: 1;">
+                                    <i class="fas fa-edit"></i> Edit
+                                </button>
+                                <button class="btn btn-danger" onclick="deletePlan(${plan.id}, '${plan.name}', ${plan.tenant_count || 0})">
+                                    <i class="fas fa-trash"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                `).join('')}
+            </div>
+        `;
+    } catch (error) {
+        showError(content, error.message);
+    }
+}
+
+async function showCreatePlanModal() {
+    const content = `
+        <form id="createPlanForm">
+            <h3 style="margin-top: 0; color: var(--primary);">Basic Information</h3>
+            <div class="form-group">
+                <label class="form-label">Plan Name *</label>
+                <input type="text" class="form-control" name="name" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Description</label>
+                <textarea class="form-control" name="description" rows="3"></textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Price *</label>
+                        <input type="number" class="form-control" name="price" step="0.01" required>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Currency</label>
+                        <select class="form-control" name="currency">
+                            <option value="USD">USD</option>
+                            <option value="EUR">EUR</option>
+                            <option value="GBP">GBP</option>
+                            <option value="BRL">BRL</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Billing Period</label>
+                        <select class="form-control" name="billing_period">
+                            <option value="monthly">Monthly</option>
+                            <option value="yearly">Yearly</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            
+            <hr>
+            <h3 style="color: var(--primary);">Resource Limits</h3>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Max Stores</label>
+                        <input type="number" class="form-control" name="max_stores" value="1" min="1">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Max Users</label>
+                        <input type="number" class="form-control" name="max_users" value="5" min="1">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Max Departments</label>
+                        <input type="number" class="form-control" name="max_departments" value="5" min="1">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Max Contacts</label>
+                        <input type="number" class="form-control" name="max_contacts" value="1000" min="1">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Max Conversations</label>
+                        <input type="number" class="form-control" name="max_conversations" value="1000" min="1">
+                    </div>
+                </div>
+                <div class="col-md-4">
+                    <div class="form-group">
+                        <label class="form-label">Max Messages/Month</label>
+                        <input type="number" class="form-control" name="max_messages_per_month" value="10000" min="1">
+                    </div>
+                </div>
+            </div>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Max FAQs</label>
+                        <input type="number" class="form-control" name="max_faqs" value="10" min="0">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="form-label">Sort Order</label>
+                        <input type="number" class="form-control" name="sort_order" value="0">
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <h3 style="color: var(--primary);">Features</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="switch-label">
+                            <input type="checkbox" name="whatsapp_enabled" checked>
+                            <span>WhatsApp Habilitado</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="switch-label">
+                            <input type="checkbox" name="ai_enabled">
+                            <span>IA Habilitada</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="switch-label">
+                            <input type="checkbox" name="woocommerce_enabled">
+                            <span>WooCommerce Habilitado</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="switch-label">
+                            <input type="checkbox" name="analytics_enabled" checked>
+                            <span>Analytics Habilitado</span>
+                        </label>
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="switch-label">
+                            <input type="checkbox" name="priority_support_enabled">
+                            <span>Suporte Prioritário</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="switch-label">
+                            <input type="checkbox" name="api_access_enabled">
+                            <span>Acesso à API</span>
+                        </label>
+                    </div>
+                    <div class="form-group">
+                        <label class="switch-label">
+                            <input type="checkbox" name="custom_branding_enabled">
+                            <span>Marca Personalizada</span>
+                        </label>
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <h3 style="color: var(--primary);">Faturas e Orçamentos</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="switch-label">
+                            <input type="checkbox" name="invoices_enabled" id="invoices_enabled" onchange="toggleInvoiceLimit()">
+                            <span>Faturas Habilitadas</span>
+                        </label>
+                    </div>
+                    <div class="form-group" id="invoice_limit_group" style="display: none;">
+                        <label class="form-label">Máx. Faturas/Mês</label>
+                        <input type="number" class="form-control" name="max_invoices_per_month" value="0" min="0">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="switch-label">
+                            <input type="checkbox" name="quotes_enabled" id="quotes_enabled" onchange="toggleQuoteLimit()">
+                            <span>Orçamentos Habilitados</span>
+                        </label>
+                    </div>
+                    <div class="form-group" id="quote_limit_group" style="display: none;">
+                        <label class="form-label">Máx. Orçamentos/Mês</label>
+                        <input type="number" class="form-control" name="max_quotes_per_month" value="0" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <h3 style="color: var(--primary);">Widgets e Links de Pagamento</h3>
+            <div class="row">
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="switch-label">
+                            <input type="checkbox" name="widgets_enabled" id="widgets_enabled" onchange="toggleWidgetLimit()">
+                            <span>Widgets Habilitados</span>
+                        </label>
+                    </div>
+                    <div class="form-group" id="widget_limit_group" style="display: none;">
+                        <label class="form-label">Máx. Widgets</label>
+                        <input type="number" class="form-control" name="max_widgets" value="0" min="0">
+                    </div>
+                </div>
+                <div class="col-md-6">
+                    <div class="form-group">
+                        <label class="switch-label">
+                            <input type="checkbox" name="payment_links_enabled" id="payment_links_enabled" onchange="togglePaymentLinkLimit()">
+                            <span>Links de Pagamento Habilitados</span>
+                        </label>
+                    </div>
+                    <div class="form-group" id="payment_link_limit_group" style="display: none;">
+                        <label class="form-label">Máx. Links/Mês</label>
+                        <input type="number" class="form-control" name="max_payment_links_per_month" value="0" min="0">
+                    </div>
+                </div>
+            </div>
+
+            <hr>
+            <h3 style="color: var(--primary);">Integração com Gateways de Pagamento</h3>
+            <div class="form-group">
+                <label class="switch-label">
+                    <input type="checkbox" name="is_free" id="is_free" onchange="togglePaymentFields()">
+                    <span>Plano Gratuito</span>
+                </label>
+                <small class="form-text">Se marcado, não é necessário configurar IDs de pagamento</small>
+            </div>
+            <div id="payment_fields">
+                <div class="form-group">
+                    <label class="form-label">Stripe Price ID</label>
+                    <input type="text" class="form-control" name="stripe_price_id" placeholder="price_...">
+                    <small class="form-text">ID do preço criado no Stripe (obrigatório se Stripe estiver ativo)</small>
+                </div>
+                <div class="form-group">
+                    <label class="form-label">PayPal Plan ID</label>
+                    <input type="text" class="form-control" name="paypal_plan_id" placeholder="P-...">
+                    <small class="form-text">ID do plano de assinatura criado no PayPal (obrigatório se PayPal estiver ativo)</small>
+                </div>
+            </div>
+        </form>
+
+        <style>
+            .switch-label {
+                display: flex;
+                align-items: center;
+                cursor: pointer;
+                user-select: none;
+            }
+            .switch-label input[type="checkbox"] {
+                margin-right: 10px;
+                width: 18px;
+                height: 18px;
+                cursor: pointer;
+            }
+            .switch-label span {
+                font-weight: 500;
+            }
+            .row {
+                display: flex;
+                gap: 1rem;
+                margin-bottom: 1rem;
+            }
+            .col-md-4 {
+                flex: 1;
+                min-width: 0;
+            }
+            .col-md-6 {
+                flex: 1;
+                min-width: 0;
+            }
+            .form-text {
+                display: block;
+                margin-top: 0.25rem;
+                font-size: 0.875rem;
+                color: #6c757d;
+            }
+        </style>
+
+        <script>
+            function toggleInvoiceLimit() {
+                const enabled = document.getElementById('invoices_enabled').checked;
+                document.getElementById('invoice_limit_group').style.display = enabled ? 'block' : 'none';
+                if (enabled) {
+                    document.querySelector('input[name="max_invoices_per_month"]').value = 10;
+                }
+            }
+            function toggleQuoteLimit() {
+                const enabled = document.getElementById('quotes_enabled').checked;
+                document.getElementById('quote_limit_group').style.display = enabled ? 'block' : 'none';
+                if (enabled) {
+                    document.querySelector('input[name="max_quotes_per_month"]').value = 10;
+                }
+            }
+            function toggleWidgetLimit() {
+                const enabled = document.getElementById('widgets_enabled').checked;
+                document.getElementById('widget_limit_group').style.display = enabled ? 'block' : 'none';
+                if (enabled) {
+                    document.querySelector('input[name="max_widgets"]').value = 3;
+                }
+            }
+            function togglePaymentLinkLimit() {
+                const enabled = document.getElementById('payment_links_enabled').checked;
+                document.getElementById('payment_link_limit_group').style.display = enabled ? 'block' : 'none';
+                if (enabled) {
+                    document.querySelector('input[name="max_payment_links_per_month"]').value = 50;
+                }
+            }
+            function togglePaymentFields() {
+                const isFree = document.getElementById('is_free').checked;
+                document.getElementById('payment_fields').style.display = isFree ? 'none' : 'block';
+            }
+        </script>
+    `;
+
+    const footer = `
+        <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+        <button class="btn btn-primary" onclick="submitCreatePlan()">Criar Plano</button>
+    `;
+
+    createModal('Criar Plano de Assinatura', content, footer);
+}
+
+async function submitCreatePlan() {
+    const form = document.getElementById('createPlanForm');
+    const formData = new FormData(form);
+    const data = {};
+    
+    // Process all form fields
+    for (const [key, value] of formData.entries()) {
+        data[key] = value;
+    }
+    
+    // Process checkboxes (they won't be in formData if unchecked)
+    const checkboxes = [
+        'whatsapp_enabled', 'ai_enabled', 'woocommerce_enabled', 'analytics_enabled',
+        'priority_support_enabled', 'api_access_enabled', 'custom_branding_enabled',
+        'invoices_enabled', 'quotes_enabled', 'widgets_enabled', 'payment_links_enabled',
+        'is_free'
+    ];
+    
+    checkboxes.forEach(checkbox => {
+        const element = form.querySelector(`input[name="${checkbox}"]`);
+        data[checkbox] = element ? element.checked : false;
+    });
+
+    // Validate payment IDs if not free plan
+    if (!data.is_free) {
+        if (!data.stripe_price_id && !data.paypal_plan_id) {
+            alert('Para planos pagos, você deve fornecer pelo menos um ID de pagamento (Stripe ou PayPal)');
+            return;
+        }
+    }
+
+    try {
+        await apiRequest('/superadmin/plans', {
+            method: 'POST',
+            body: JSON.stringify(data)
+        });
+
+        closeModal();
+        showSuccess('Plano criado com sucesso!');
+        loadPlans();
+    } catch (error) {
+        alert('Erro: ' + error.message);
+    }
+}
+
+async function editPlan(id) {
+    try {
+        const response = await apiRequest('/superadmin/plans');
+        const plan = (response.data || []).find(p => p.id === id);
+
+        const content = `
+            <form id="editPlanForm">
+                <h3 style="margin-top: 0; color: var(--primary);">Informações Básicas</h3>
+                <div class="form-group">
+                    <label class="form-label">Nome do Plano</label>
+                    <input type="text" class="form-control" name="name" value="${plan.name}">
+                </div>
+                <div class="form-group">
+                    <label class="form-label">Descrição</label>
+                    <textarea class="form-control" name="description" rows="3">${plan.description || ''}</textarea>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Preço</label>
+                            <input type="number" class="form-control" name="price" step="0.01" value="${plan.price}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Moeda</label>
+                            <select class="form-control" name="currency">
+                                <option value="USD" ${plan.currency === 'USD' ? 'selected' : ''}>USD</option>
+                                <option value="EUR" ${plan.currency === 'EUR' ? 'selected' : ''}>EUR</option>
+                                <option value="GBP" ${plan.currency === 'GBP' ? 'selected' : ''}>GBP</option>
+                                <option value="BRL" ${plan.currency === 'BRL' ? 'selected' : ''}>BRL</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Período</label>
+                            <select class="form-control" name="billing_period">
+                                <option value="monthly" ${plan.billing_period === 'monthly' ? 'selected' : ''}>Mensal</option>
+                                <option value="yearly" ${plan.billing_period === 'yearly' ? 'selected' : ''}>Anual</option>
+                            </select>
+                        </div>
+                    </div>
+                </div>
+                
+                <hr>
+                <h3 style="color: var(--primary);">Limites de Recursos</h3>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Máx. Lojas</label>
+                            <input type="number" class="form-control" name="max_stores" value="${plan.max_stores || 1}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Máx. Usuários</label>
+                            <input type="number" class="form-control" name="max_users" value="${plan.max_users}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Máx. Departamentos</label>
+                            <input type="number" class="form-control" name="max_departments" value="${plan.max_departments || 5}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Máx. Contatos</label>
+                            <input type="number" class="form-control" name="max_contacts" value="${plan.max_contacts || 1000}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Máx. Conversas</label>
+                            <input type="number" class="form-control" name="max_conversations" value="${plan.max_conversations}">
+                        </div>
+                    </div>
+                    <div class="col-md-4">
+                        <div class="form-group">
+                            <label class="form-label">Máx. Mensagens/Mês</label>
+                            <input type="number" class="form-control" name="max_messages_per_month" value="${plan.max_messages_per_month}">
+                        </div>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Máx. FAQs</label>
+                            <input type="number" class="form-control" name="max_faqs" value="${plan.max_faqs || 10}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="form-label">Ordem de Exibição</label>
+                            <input type="number" class="form-control" name="sort_order" value="${plan.sort_order}">
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <h3 style="color: var(--primary);">Funcionalidades</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" name="whatsapp_enabled" ${plan.whatsapp_enabled ? 'checked' : ''}>
+                                <span>WhatsApp Habilitado</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" name="ai_enabled" ${plan.ai_enabled ? 'checked' : ''}>
+                                <span>IA Habilitada</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" name="woocommerce_enabled" ${plan.woocommerce_enabled ? 'checked' : ''}>
+                                <span>WooCommerce Habilitado</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" name="analytics_enabled" ${plan.analytics_enabled ? 'checked' : ''}>
+                                <span>Analytics Habilitado</span>
+                            </label>
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" name="priority_support_enabled" ${plan.priority_support_enabled ? 'checked' : ''}>
+                                <span>Suporte Prioritário</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" name="api_access_enabled" ${plan.api_access_enabled ? 'checked' : ''}>
+                                <span>Acesso à API</span>
+                            </label>
+                        </div>
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" name="custom_branding_enabled" ${plan.custom_branding_enabled ? 'checked' : ''}>
+                                <span>Marca Personalizada</span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <h3 style="color: var(--primary);">Faturas e Orçamentos</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" name="invoices_enabled" id="edit_invoices_enabled" ${plan.invoices_enabled ? 'checked' : ''} onchange="toggleEditInvoiceLimit()">
+                                <span>Faturas Habilitadas</span>
+                            </label>
+                        </div>
+                        <div class="form-group" id="edit_invoice_limit_group" style="display: ${plan.invoices_enabled ? 'block' : 'none'};">
+                            <label class="form-label">Máx. Faturas/Mês</label>
+                            <input type="number" class="form-control" name="max_invoices_per_month" value="${plan.max_invoices_per_month || 0}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" name="quotes_enabled" id="edit_quotes_enabled" ${plan.quotes_enabled ? 'checked' : ''} onchange="toggleEditQuoteLimit()">
+                                <span>Orçamentos Habilitados</span>
+                            </label>
+                        </div>
+                        <div class="form-group" id="edit_quote_limit_group" style="display: ${plan.quotes_enabled ? 'block' : 'none'};">
+                            <label class="form-label">Máx. Orçamentos/Mês</label>
+                            <input type="number" class="form-control" name="max_quotes_per_month" value="${plan.max_quotes_per_month || 0}">
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <h3 style="color: var(--primary);">Widgets e Links de Pagamento</h3>
+                <div class="row">
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" name="widgets_enabled" id="edit_widgets_enabled" ${plan.widgets_enabled ? 'checked' : ''} onchange="toggleEditWidgetLimit()">
+                                <span>Widgets Habilitados</span>
+                            </label>
+                        </div>
+                        <div class="form-group" id="edit_widget_limit_group" style="display: ${plan.widgets_enabled ? 'block' : 'none'};">
+                            <label class="form-label">Máx. Widgets</label>
+                            <input type="number" class="form-control" name="max_widgets" value="${plan.max_widgets || 0}">
+                        </div>
+                    </div>
+                    <div class="col-md-6">
+                        <div class="form-group">
+                            <label class="switch-label">
+                                <input type="checkbox" name="payment_links_enabled" id="edit_payment_links_enabled" ${plan.payment_links_enabled ? 'checked' : ''} onchange="toggleEditPaymentLinkLimit()">
+                                <span>Links de Pagamento Habilitados</span>
+                            </label>
+                        </div>
+                        <div class="form-group" id="edit_payment_link_limit_group" style="display: ${plan.payment_links_enabled ? 'block' : 'none'};">
+                            <label class="form-label">Máx. Links/Mês</label>
+                            <input type="number" class="form-control" name="max_payment_links_per_month" value="${plan.max_payment_links_per_month || 0}">
+                        </div>
+                    </div>
+                </div>
+
+                <hr>
+                <div class="form-group">
+                    <label class="form-label">Status</label>
+                    <select class="form-control" name="active">
+                        <option value="1" ${plan.active ? 'selected' : ''}>Ativo</option>
+                        <option value="0" ${!plan.active ? 'selected' : ''}>Inativo</option>
+                    </select>
+                </div>
+            </form>
+
+            <style>
+                .switch-label {
+                    display: flex;
+                    align-items: center;
+                    cursor: pointer;
+                    user-select: none;
+                }
+                .switch-label input[type="checkbox"] {
+                    margin-right: 10px;
+                    width: 18px;
+                    height: 18px;
+                    cursor: pointer;
+                }
+                .switch-label span {
+                    font-weight: 500;
+                }
+                .row {
+                    display: flex;
+                    gap: 1rem;
+                    margin-bottom: 1rem;
+                }
+                .col-md-4 {
+                    flex: 1;
+                    min-width: 0;
+                }
+                .col-md-6 {
+                    flex: 1;
+                    min-width: 0;
+                }
+            </style>
+
+            <script>
+                function toggleEditInvoiceLimit() {
+                    const enabled = document.getElementById('edit_invoices_enabled').checked;
+                    document.getElementById('edit_invoice_limit_group').style.display = enabled ? 'block' : 'none';
+                }
+                function toggleEditQuoteLimit() {
+                    const enabled = document.getElementById('edit_quotes_enabled').checked;
+                    document.getElementById('edit_quote_limit_group').style.display = enabled ? 'block' : 'none';
+                }
+                function toggleEditWidgetLimit() {
+                    const enabled = document.getElementById('edit_widgets_enabled').checked;
+                    document.getElementById('edit_widget_limit_group').style.display = enabled ? 'block' : 'none';
+                }
+                function toggleEditPaymentLinkLimit() {
+                    const enabled = document.getElementById('edit_payment_links_enabled').checked;
+                    document.getElementById('edit_payment_link_limit_group').style.display = enabled ? 'block' : 'none';
+                }
+            </script>
+        `;
+
+        const footer = `
+            <button class="btn btn-secondary" onclick="closeModal()">Cancelar</button>
+            <button class="btn btn-primary" onclick="submitEditPlan(${id})">Atualizar</button>
+        `;
+
+        createModal('Editar Plano', content, footer);
+    } catch (error) {
+        alert('Erro: ' + error.message);
+    }
+}
+
+async function submitEditPlan(id) {
+    const form = document.getElementById('editPlanForm');
+    const formData = new FormData(form);
+    const data = {};
+    
+    // Process all form fields
+    for (const [key, value] of formData.entries()) {
+        data[key] = value;
+    }
+    
+    // Process checkboxes
+    const checkboxes = [
+        'whatsapp_enabled', 'ai_enabled', 'woocommerce_enabled', 'analytics_enabled',
+        'priority_support_enabled', 'api_access_enabled', 'custom_branding_enabled',
+        'invoices_enabled', 'quotes_enabled', 'widgets_enabled', 'payment_links_enabled'
+    ];
+    
+    checkboxes.forEach(checkbox => {
+        const element = form.querySelector(`input[name="${checkbox}"]`);
+        data[checkbox] = element ? element.checked : false;
+    });
+
+    try {
+        await apiRequest(`/superadmin/plans/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify(data)
+        });
+
+        closeModal();
+        showSuccess('Plano atualizado com sucesso!');
+        loadPlans();
+    } catch (error) {
+        alert('Erro: ' + error.message);
+    }
+}
+
+function deletePlan(id, name, tenantCount) {
+    if (tenantCount > 0) {
+        alert(`Cannot delete plan "${name}" because it has ${tenantCount} active tenant(s).`);
+        return;
+    }
+
+    if (confirm(`Are you sure you want to delete plan "${name}"?`)) {
+        apiRequest(`/superadmin/plans/${id}`, {
+            method: 'DELETE'
+        }).then(() => {
+            showSuccess('Plan deleted successfully!');
+            loadPlans();
+        }).catch(error => {
+            alert('Error: ' + error.message);
+        });
+    }
+}

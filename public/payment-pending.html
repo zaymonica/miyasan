@@ -1,0 +1,309 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Payment Pending - Misayan SaaS</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <script src="/js/branding.js"></script>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: linear-gradient(135deg, #00a149 0%, #319131 100%);
+            min-height: 100vh;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+        }
+
+        .container {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            max-width: 600px;
+            width: 100%;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .icon {
+            font-size: 80px;
+            margin-bottom: 30px;
+        }
+
+        .icon.pending {
+            color: #f39c12;
+        }
+
+        .icon.success {
+            color: #27ae60;
+        }
+
+        .icon.error {
+            color: #e74c3c;
+        }
+
+        h1 {
+            font-size: 28px;
+            color: #333;
+            margin-bottom: 15px;
+        }
+
+        p {
+            color: #666;
+            font-size: 16px;
+            line-height: 1.6;
+            margin-bottom: 20px;
+        }
+
+        .alert {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            border-radius: 10px;
+            padding: 20px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .alert h3 {
+            color: #856404;
+            margin-bottom: 10px;
+            font-size: 18px;
+        }
+
+        .alert p {
+            color: #856404;
+            margin: 0;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 14px 30px;
+            border: none;
+            border-radius: 8px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            text-decoration: none;
+            margin: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #00a149 0%, #319131 100%);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px rgba(0, 161, 73, 0.3);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            color: white;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+            transform: translateY(-2px);
+        }
+
+        .loading {
+            text-align: center;
+            padding: 40px;
+        }
+
+        .spinner {
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #00a149;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        .steps {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 25px;
+            margin: 30px 0;
+            text-align: left;
+        }
+
+        .steps h3 {
+            color: #333;
+            margin-bottom: 15px;
+            font-size: 18px;
+        }
+
+        .steps ol {
+            margin-left: 20px;
+            color: #666;
+        }
+
+        .steps li {
+            margin-bottom: 10px;
+            line-height: 1.6;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="loading" id="loading">
+            <div class="spinner"></div>
+            <p style="color: #666;">Processing your payment...</p>
+        </div>
+
+        <div id="content" style="display: none;">
+            <!-- Content will be loaded here -->
+        </div>
+    </div>
+
+    <script>
+        const urlParams = new URLSearchParams(window.location.search);
+        const tenantId = urlParams.get('tenant');
+        const gateway = urlParams.get('gateway');
+        const status = urlParams.get('status') || 'pending';
+
+        function showContent() {
+            document.getElementById('loading').style.display = 'none';
+            document.getElementById('content').style.display = 'block';
+        }
+
+        function displayPendingPayment() {
+            const content = document.getElementById('content');
+            
+            if (gateway === 'stripe') {
+                content.innerHTML = `
+                    <div class="icon pending">
+                        <i class="fas fa-clock"></i>
+                    </div>
+                    <h1>Payment Processing</h1>
+                    <p>Your payment is being processed. This usually takes a few moments.</p>
+                    
+                    <div class="alert">
+                        <h3><i class="fas fa-info-circle"></i> What happens next?</h3>
+                        <p>You will receive an email confirmation once your payment is processed. Your account will be activated automatically.</p>
+                    </div>
+
+                    <a href="/login" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Go to Login
+                    </a>
+                `;
+            } else if (gateway === 'paypal') {
+                content.innerHTML = `
+                    <div class="icon pending">
+                        <i class="fab fa-paypal"></i>
+                    </div>
+                    <h1>PayPal Payment Pending</h1>
+                    <p>Your PayPal payment is being processed.</p>
+                    
+                    <div class="alert">
+                        <h3><i class="fas fa-info-circle"></i> What happens next?</h3>
+                        <p>You will receive an email confirmation once your payment is processed. Your account will be activated automatically.</p>
+                    </div>
+
+                    <a href="/login" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Go to Login
+                    </a>
+                `;
+            } else {
+                // Generic pending
+                content.innerHTML = `
+                    <div class="icon pending">
+                        <i class="fas fa-hourglass-half"></i>
+                    </div>
+                    <h1>Payment Pending</h1>
+                    <p>Your payment is being processed.</p>
+                    
+                    <div class="alert">
+                        <h3><i class="fas fa-info-circle"></i> What happens next?</h3>
+                        <p>You will receive an email confirmation once your payment is confirmed. Your account will be activated shortly.</p>
+                    </div>
+
+                    <a href="/login" class="btn btn-primary">
+                        <i class="fas fa-sign-in-alt"></i> Go to Login
+                    </a>
+                `;
+            }
+
+            showContent();
+        }
+
+        function displaySuccess() {
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div class="icon success">
+                    <i class="fas fa-check-circle"></i>
+                </div>
+                <h1>Payment Successful!</h1>
+                <p>Thank you for your payment. Your account has been activated.</p>
+                
+                <div class="steps">
+                    <h3>Next Steps:</h3>
+                    <ol>
+                        <li>Log in to your account</li>
+                        <li>Complete your profile setup</li>
+                        <li>Connect your WhatsApp</li>
+                        <li>Start managing your conversations</li>
+                    </ol>
+                </div>
+
+                <a href="/login" class="btn btn-primary">
+                    <i class="fas fa-sign-in-alt"></i> Go to Login
+                </a>
+            `;
+            showContent();
+        }
+
+        function displayError() {
+            const content = document.getElementById('content');
+            content.innerHTML = `
+                <div class="icon error">
+                    <i class="fas fa-times-circle"></i>
+                </div>
+                <h1>Payment Failed</h1>
+                <p>We couldn't process your payment. Please try again.</p>
+                
+                <div class="alert">
+                    <h3><i class="fas fa-exclamation-triangle"></i> What can you do?</h3>
+                    <p>You can try again with a different payment method or contact our support team for assistance.</p>
+                </div>
+
+                <a href="/checkout?plan=${urlParams.get('plan')}&tenant=${tenantId}" class="btn btn-primary">
+                    <i class="fas fa-redo"></i> Try Again
+                </a>
+                <a href="/login" class="btn btn-secondary">
+                    <i class="fas fa-sign-in-alt"></i> Go to Login
+                </a>
+            `;
+            showContent();
+        }
+
+        // Initialize based on status
+        setTimeout(() => {
+            if (status === 'success') {
+                displaySuccess();
+            } else if (status === 'error') {
+                displayError();
+            } else {
+                displayPendingPayment();
+            }
+        }, 1500);
+    </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+{
+  "name": "WhatsApp Business Platform",
+  "short_name": "WhatsApp Business",
+  "description": "Complete multi-tenant WhatsApp Business solution",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#ffffff",
+  "theme_color": "#25d366",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "/admin/images/logo-192.png",
+      "sizes": "192x192",
+      "type": "image/png",
+      "purpose": "any maskable"
+    },
+    {
+      "src": "/admin/images/logo-512.png", 
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
+    }
+  ],
+  "categories": ["business", "communication", "productivity"],
+  "lang": "en",
+  "dir": "ltr"
+}

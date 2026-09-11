@@ -1,0 +1,366 @@
+/**
+ * RTL (Right-to-Left) Stylesheet
+ * 
+ * This stylesheet provides RTL-specific styles using CSS logical properties.
+ * It is loaded ONLY when dir="rtl" is set on the HTML element.
+ * 
+ * IMPORTANT: This file should NOT affect LTR layouts.
+ * All styles are scoped to [dir="rtl"] selector.
+ */
+
+/* ============================================
+   RTL BASE STYLES
+   ============================================ */
+
+[dir="rtl"] {
+  direction: rtl;
+  text-align: start;
+}
+
+[dir="rtl"] body {
+  direction: rtl;
+  text-align: start;
+}
+
+/* ============================================
+   LAYOUT COMPONENTS
+   ============================================ */
+
+/* Admin Container */
+[dir="rtl"] .admin-container {
+  direction: rtl;
+}
+
+/* Sidebar - Mirror for RTL */
+[dir="rtl"] .sidebar {
+  right: 0;
+  left: auto;
+  border-right: none;
+  border-left: 1px solid #ddd;
+}
+
+[dir="rtl"] .sidebar.collapsed {
+  transform: translateX(100%);
+}
+
+[dir="rtl"] .sidebar:not(.collapsed) {
+  transform: translateX(0);
+}
+
+/* Main Content - Adjust padding for RTL sidebar */
+[dir="rtl"] .main-content {
+  margin-left: 0;
+  margin-right: 250px;
+}
+
+[dir="rtl"] .main-content.expanded {
+  margin-right: 60px;
+  margin-left: 0;
+}
+
+/* Header */
+[dir="rtl"] .header {
+  padding-inline-start: 20px;
+  padding-inline-end: 20px;
+}
+
+[dir="rtl"] .header-left {
+  margin-right: auto;
+  margin-left: 0;
+}
+
+[dir="rtl"] .header-right {
+  margin-left: auto;
+  margin-right: 0;
+}
+
+/* ============================================
+   NAVIGATION & MENU
+   ============================================ */
+
+[dir="rtl"] .nav-menu {
+  direction: rtl;
+}
+
+[dir="rtl"] .nav-item {
+  text-align: start;
+  direction: rtl;
+}
+
+[dir="rtl"] .menu-item {
+  text-align: start;
+  padding-inline-start: 20px;
+  padding-inline-end: 20px;
+}
+
+[dir="rtl"] .menu-item i,
+[dir="rtl"] .menu-item .icon {
+  margin-inline-end: 10px;
+  margin-inline-start: 0;
+}
+
+[dir="rtl"] .submenu {
+  padding-inline-start: 40px;
+  padding-inline-end: 0;
+}
+
+/* ============================================
+   FORMS & INPUTS
+   ============================================ */
+
+[dir="rtl"] .form-group {
+  text-align: start;
+}
+
+[dir="rtl"] .form-label {
+  text-align: start;
+}
+
+[dir="rtl"] input,
+[dir="rtl"] textarea,
+[dir="rtl"] select {
+  text-align: start;
+}
+
+[dir="rtl"] .input-group-prepend {
+  order: 2;
+}
+
+[dir="rtl"] .input-group-append {
+  order: 0;
+}
+
+[dir="rtl"] .form-check {
+  padding-inline-start: 0;
+  padding-inline-end: 1.25rem;
+}
+
+[dir="rtl"] .form-check-input {
+  margin-inline-start: 0;
+  margin-inline-end: -1.25rem;
+}
+
+/* ============================================
+   TABLES
+   ============================================ */
+
+[dir="rtl"] table {
+  text-align: start;
+}
+
+[dir="rtl"] th,
+[dir="rtl"] td {
+  text-align: start;
+}
+
+[dir="rtl"] .table-actions {
+  text-align: start;
+}
+
+/* ============================================
+   CARDS & WIDGETS
+   ============================================ */
+
+[dir="rtl"] .card {
+  text-align: start;
+}
+
+[dir="rtl"] .card-header {
+  text-align: start;
+}
+
+[dir="rtl"] .card-body {
+  text-align: start;
+}
+
+[dir="rtl"] .widget {
+  text-align: start;
+}
+
+[dir="rtl"] .widget-icon {
+  margin-inline-end: 15px;
+  margin-inline-start: 0;
+}
+
+/* ============================================
+   BUTTONS & ACTIONS
+   ============================================ */
+
+[dir="rtl"] .btn-group {
+  direction: rtl;
+}
+
+[dir="rtl"] .btn i {
+  margin-inline-end: 5px;
+  margin-inline-start: 0;
+}
+
+[dir="rtl"] .btn i:last-child {
+  margin-inline-end: 0;
+  margin-inline-start: 5px;
+}
+
+/* ============================================
+   MODALS & DIALOGS
+   ============================================ */
+
+[dir="rtl"] .modal-header {
+  text-align: start;
+}
+
+[dir="rtl"] .modal-body {
+  text-align: start;
+}
+
+[dir="rtl"] .modal-footer {
+  justify-content: flex-start;
+}
+
+[dir="rtl"] .close {
+  margin-inline-start: auto;
+  margin-inline-end: 0;
+}
+
+/* ============================================
+   LISTS & MENUS
+   ============================================ */
+
+[dir="rtl"] ul,
+[dir="rtl"] ol {
+  padding-inline-start: 0;
+  padding-inline-end: 40px;
+}
+
+[dir="rtl"] .list-group-item {
+  text-align: start;
+}
+
+[dir="rtl"] .dropdown-menu {
+  text-align: start;
+  right: 0;
+  left: auto;
+}
+
+/* ============================================
+   NOTIFICATIONS & ALERTS
+   ============================================ */
+
+[dir="rtl"] .alert {
+  text-align: start;
+}
+
+[dir="rtl"] .notification {
+  text-align: start;
+}
+
+[dir="rtl"] .toast {
+  text-align: start;
+}
+
+/* ============================================
+   BREADCRUMBS & PAGINATION
+   ============================================ */
+
+[dir="rtl"] .breadcrumb {
+  direction: rtl;
+}
+
+[dir="rtl"] .breadcrumb-item + .breadcrumb-item::before {
+  padding-inline-start: 0;
+  padding-inline-end: 0.5rem;
+  content: "/";
+}
+
+[dir="rtl"] .pagination {
+  direction: rtl;
+}
+
+/* ============================================
+   ICONS & DIRECTIONAL ELEMENTS
+   ============================================ */
+
+/* Flip directional icons */
+[dir="rtl"] .fa-chevron-left::before {
+  content: "\f054"; /* chevron-right */
+}
+
+[dir="rtl"] .fa-chevron-right::before {
+  content: "\f053"; /* chevron-left */
+}
+
+[dir="rtl"] .fa-arrow-left::before {
+  content: "\f061"; /* arrow-right */
+}
+
+[dir="rtl"] .fa-arrow-right::before {
+  content: "\f060"; /* arrow-left */
+}
+
+/* ============================================
+   DASHBOARD SPECIFIC
+   ============================================ */
+
+[dir="rtl"] .dashboard-stats {
+  direction: rtl;
+}
+
+[dir="rtl"] .stat-card {
+  text-align: start;
+}
+
+[dir="rtl"] .chart-container {
+  direction: ltr; /* Keep charts LTR for consistency */
+}
+
+/* ============================================
+   RTL TOGGLE BUTTON
+   ============================================ */
+
+[dir="rtl"] .rtl-toggle-btn {
+  margin-inline-start: 10px;
+  margin-inline-end: 0;
+}
+
+/* ============================================
+   UTILITIES
+   ============================================ */
+
+[dir="rtl"] .text-left {
+  text-align: right !important;
+}
+
+[dir="rtl"] .text-right {
+  text-align: left !important;
+}
+
+[dir="rtl"] .float-left {
+  float: right !important;
+}
+
+[dir="rtl"] .float-right {
+  float: left !important;
+}
+
+[dir="rtl"] .mr-1 { margin-right: 0 !important; margin-left: 0.25rem !important; }
+[dir="rtl"] .mr-2 { margin-right: 0 !important; margin-left: 0.5rem !important; }
+[dir="rtl"] .mr-3 { margin-right: 0 !important; margin-left: 1rem !important; }
+[dir="rtl"] .mr-4 { margin-right: 0 !important; margin-left: 1.5rem !important; }
+[dir="rtl"] .mr-5 { margin-right: 0 !important; margin-left: 3rem !important; }
+
+[dir="rtl"] .ml-1 { margin-left: 0 !important; margin-right: 0.25rem !important; }
+[dir="rtl"] .ml-2 { margin-left: 0 !important; margin-right: 0.5rem !important; }
+[dir="rtl"] .ml-3 { margin-left: 0 !important; margin-right: 1rem !important; }
+[dir="rtl"] .ml-4 { margin-left: 0 !important; margin-right: 1.5rem !important; }
+[dir="rtl"] .ml-5 { margin-left: 0 !important; margin-right: 3rem !important; }
+
+[dir="rtl"] .pr-1 { padding-right: 0 !important; padding-left: 0.25rem !important; }
+[dir="rtl"] .pr-2 { padding-right: 0 !important; padding-left: 0.5rem !important; }
+[dir="rtl"] .pr-3 { padding-right: 0 !important; padding-left: 1rem !important; }
+[dir="rtl"] .pr-4 { padding-right: 0 !important; padding-left: 1.5rem !important; }
+[dir="rtl"] .pr-5 { padding-right: 0 !important; padding-left: 3rem !important; }
+
+[dir="rtl"] .pl-1 { padding-left: 0 !important; padding-right: 0.25rem !important; }
+[dir="rtl"] .pl-2 { padding-left: 0 !important; padding-right: 0.5rem !important; }
+[dir="rtl"] .pl-3 { padding-left: 0 !important; padding-right: 1rem !important; }
+[dir="rtl"] .pl-4 { padding-left: 0 !important; padding-right: 1.5rem !important; }
+[dir="rtl"] .pl-5 { padding-left: 0 !important; padding-right: 3rem !important; }

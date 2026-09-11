@@ -1,0 +1,2 @@
+# This folder is kept for future migrations
+# All existing migrations have been consolidated into config/database.js

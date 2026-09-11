@@ -1,0 +1,188 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title id="pageTitle">Misayan SaaS - WhatsApp Business Platform</title>
+    <meta name="description" id="pageDescription" content="Complete multi-tenant WhatsApp Business solution">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="/css/landing.css">
+    <script src="/js/branding.js"></script>
+</head>
+<body>
+    <!-- Navigation -->
+    <nav class="navbar" id="navbar">
+        <div class="container">
+            <div class="nav-brand" id="navBrand">
+                <img src="" alt="Logo" class="nav-logo" id="headerLogo" style="display: none;">
+                <i class="fab fa-whatsapp" id="headerIcon"></i>
+                <span id="headerName">Misayan</span>
+            </div>
+            <div class="nav-menu" id="navMenu">
+                <a href="#features">Features</a>
+                <a href="#plans">Pricing</a>
+                <a href="#testimonials">Testimonials</a>
+                <a href="#contact">Contact</a>
+                <a href="/login" class="btn-nav">Login</a>
+            </div>
+            <button class="nav-toggle" id="navToggle">
+                <i class="fas fa-bars"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero" id="hero">
+        <div class="container">
+            <div class="hero-content">
+                <h1 id="heroTitle">Transform Your Business with WhatsApp</h1>
+                <p id="heroSubtitle">Complete multi-tenant WhatsApp Business solution for modern companies</p>
+                <a href="#plans" class="btn btn-primary btn-lg" id="heroCta">Start Free Trial</a>
+            </div>
+            <div class="hero-image">
+                <div class="hero-illustration" id="heroIllustration">
+                    <img src="" alt="Logo" class="hero-logo" id="heroLogo" style="display: none;">
+                    <i class="fab fa-whatsapp" id="heroIcon"></i>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Section -->
+    <section class="features" id="features">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="featuresTitle">Powerful Features</h2>
+                <p id="featuresSubtitle">Everything you need to manage WhatsApp Business at scale</p>
+            </div>
+            <div class="features-grid" id="featuresGrid">
+                <!-- Features will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- WhatsApp Link Generator Section -->
+    <section class="wa-generator" id="waGenerator">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="waGeneratorTitle">WhatsApp Chat Link Generator</h2>
+                <p id="waGeneratorSubtitle">Create custom WhatsApp links with pre-filled messages</p>
+            </div>
+            <div class="wa-generator-content">
+                <div class="wa-generator-illustration">
+                    <div class="wa-icon-circle">
+                        <i class="fas fa-link"></i>
+                    </div>
+                    <div class="wa-people">
+                        <div class="person person-1">
+                            <i class="fas fa-user"></i>
+                        </div>
+                        <div class="person person-2">
+                            <i class="fas fa-user"></i>
+                        </div>
+                    </div>
+                </div>
+                <div class="wa-generator-form">
+                    <div class="form-card">
+                        <div class="form-header">
+                            <i class="fab fa-whatsapp"></i>
+                            <h3>WhatsApp chat link</h3>
+                        </div>
+                        <p class="form-description">
+                            Please provide your WhatsApp number including your country code, but omit the '+' symbol. 
+                            For example, if your country code is +91 and your WhatsApp number is 9999999999, enter it as 919999999999.
+                        </p>
+                        <div class="form-group">
+                            <label>WhatsApp Number *</label>
+                            <input type="tel" id="waPhone" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Enter your email ID</label>
+                            <input type="email" id="waEmail" placeholder="eg. some@email.com" class="form-control">
+                        </div>
+                        <div class="form-group">
+                            <label>Welcome Message <span class="badge-optional">OPTIONAL</span></label>
+                            <p class="form-help">Automatically send this message when a user clicks on your chat link to streamline the start of the conversation.</p>
+                            <textarea id="waMessage" placeholder="eg. Hello, I got a question about your product can you please help?" class="form-control" rows="4"></textarea>
+                        </div>
+                        <button class="btn btn-success btn-block" id="generateLinkBtn">
+                            <i class="fas fa-link"></i> Generate link
+                        </button>
+                        <div id="generatedLink" class="generated-link" style="display: none;">
+                            <label>Your WhatsApp Link:</label>
+                            <div class="link-display">
+                                <input type="text" id="linkOutput" readonly class="form-control">
+                                <button class="btn btn-copy" id="copyLinkBtn">
+                                    <i class="fas fa-copy"></i>
+                                </button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Plans Section -->
+    <section class="plans" id="plans">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="plansTitle">Choose Your Plan</h2>
+                <p id="plansSubtitle">Flexible pricing for businesses of all sizes</p>
+            </div>
+            <div class="plans-grid" id="plansGrid">
+                <!-- Plans will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- Testimonials Section -->
+    <section class="testimonials" id="testimonials">
+        <div class="container">
+            <div class="section-header">
+                <h2 id="testimonialsTitle">What Our Clients Say</h2>
+                <p id="testimonialsSubtitle">Join thousands of satisfied customers</p>
+            </div>
+            <div class="testimonials-grid" id="testimonialsGrid">
+                <!-- Testimonials will be loaded dynamically -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="cta" id="cta">
+        <div class="container">
+            <h2 id="ctaTitle">Ready to Get Started?</h2>
+            <p id="ctaSubtitle">Start your free trial today. No credit card required.</p>
+            <a href="#plans" class="btn btn-white btn-lg" id="ctaButton">Start Free Trial</a>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="footer" id="footer">
+        <div class="container">
+            <div class="footer-content">
+                <div class="footer-brand" id="footerBrand">
+                    <img src="" alt="Logo" class="footer-logo" id="footerLogo" style="display: none;">
+                    <i class="fab fa-whatsapp" id="footerIcon"></i>
+                    <span id="footerName">Misayan</span>
+                </div>
+                <div class="footer-links">
+                    <a href="#features">Features</a>
+                    <a href="#plans">Pricing</a>
+                    <a href="#testimonials">Testimonials</a>
+                    <a href="/login">Login</a>
+                </div>
+                <div class="footer-social" id="footerSocial">
+                    <!-- Social links will be loaded dynamically -->
+                </div>
+            </div>
+            <div class="footer-bottom">
+                <p id="footerText">© 2025 Misayan SaaS. All rights reserved.</p>
+            </div>
+        </div>
+    </footer>
+
+    <script src="/js/landing.js"></script>
+</body>
+</html>

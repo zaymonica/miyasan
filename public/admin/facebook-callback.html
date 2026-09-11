@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Login - Processing...</title>
+    <style>
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            height: 100vh;
+            margin: 0;
+            background: #f0f2f5;
+        }
+        .container {
+            text-align: center;
+            padding: 40px;
+            background: white;
+            border-radius: 12px;
+            box-shadow: 0 2px 12px rgba(0,0,0,0.1);
+            max-width: 400px;
+        }
+        .spinner {
+            border: 4px solid #f3f3f3;
+            border-top: 4px solid #1877f2;
+            border-radius: 50%;
+            width: 50px;
+            height: 50px;
+            animation: spin 1s linear infinite;
+            margin: 0 auto 20px;
+        }
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        h2 {
+            color: #1c1e21;
+            margin: 0 0 10px;
+        }
+        p {
+            color: #65676b;
+            margin: 0;
+        }
+        .error {
+            color: #e74c3c;
+            margin-top: 20px;
+        }
+        .success {
+            color: #27ae60;
+            margin-top: 20px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="spinner"></div>
+        <h2>Processing Facebook Login</h2>
+        <p id="status">Please wait...</p>
+    </div>
+
+    <script>
+        (function() {
+            const statusEl = document.getElementById('status');
+            
+            try {
+                // Get URL parameters
+                const urlParams = new URLSearchParams(window.location.search);
+                const code = urlParams.get('code');
+                const error = urlParams.get('error');
+                const errorDescription = urlParams.get('error_description');
+                
+                console.log('Facebook callback received:', { code, error, errorDescription });
+                
+                if (error) {
+                    statusEl.textContent = `Error: ${errorDescription || error}`;
+                    statusEl.className = 'error';
+                    
+                    // Store error in localStorage
+                    localStorage.setItem('facebook_callback_error', errorDescription || error);
+                    
+                    // Try to send to parent window
+                    if (window.opener) {
+                        window.opener.postMessage({
+                            type: 'facebook-callback',
+                            error: errorDescription || error
+                        }, window.location.origin);
+                    }
+                    
+                    // Close window or redirect after 3 seconds
+                    setTimeout(() => {
+                        if (window.opener) {
+                            window.close();
+                        } else {
+                            window.location.href = '/admin/#whatsapp-cloud';
+                        }
+                    }, 3000);
+                    return;
+                }
+                
+                if (code) {
+                    statusEl.textContent = 'Authorization successful! Connecting your account...';
+                    statusEl.className = 'success';
+                    
+                    // Store code in localStorage for the main window to pick up
+                    localStorage.setItem('facebook_callback_code', code);
+                    localStorage.setItem('facebook_callback_timestamp', Date.now().toString());
+                    
+                    console.log('Code stored in localStorage:', code);
+                    
+                    // Try to send to parent window (works in desktop popup)
+                    if (window.opener) {
+                        console.log('Sending code to parent window');
+                        window.opener.postMessage({
+                            type: 'facebook-callback',
+                            code: code
+                        }, window.location.origin);
+                        
+                        // Close window after sending message
+                        setTimeout(() => {
+                            window.close();
+                        }, 1000);
+                    } else {
+                        // Mobile or same-window flow - redirect back
+                        console.log('No opener, redirecting back to main page');
+                        statusEl.textContent = 'Redirecting...';
+                        
+                        setTimeout(() => {
+                            window.location.href = '/admin/#whatsapp-cloud';
+                        }, 1500);
+                    }
+                } else {
+                    statusEl.textContent = 'Error: No authorization code received';
+                    statusEl.className = 'error';
+                    
+                    setTimeout(() => {
+                        if (window.opener) {
+                            window.close();
+                        } else {
+                            window.location.href = '/admin/#whatsapp-cloud';
+                        }
+                    }, 3000);
+                }
+            } catch (err) {
+                console.error('Error processing callback:', err);
+                statusEl.textContent = `Error: ${err.message}`;
+                statusEl.className = 'error';
+                
+                setTimeout(() => {
+                    if (window.opener) {
+                        window.close();
+                    } else {
+                        window.location.href = '/admin/whatsapp-cloud';
+                    }
+                }, 3000);
+            }
+        })();
+    </script>
+</body>
+</html>
